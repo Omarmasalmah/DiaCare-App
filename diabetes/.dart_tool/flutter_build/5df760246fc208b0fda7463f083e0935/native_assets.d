@@ -1,0 +1,1 @@
+ D:\\University\\Graduation\ Project\\Graduation_Project\\diabetes\\.dart_tool\\flutter_build\\5df760246fc208b0fda7463f083e0935\\native_assets.yaml: 

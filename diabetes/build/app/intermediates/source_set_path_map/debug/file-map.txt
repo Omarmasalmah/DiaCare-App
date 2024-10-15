@@ -1,0 +1,27 @@
+com.example.diabetes.app-core-runtime-2.2.0-0 C:\Users\coolnet\.gradle\caches\transforms-3\0073f776ec986342f7d8a627afdc659a\transformed\core-runtime-2.2.0\res
+com.example.diabetes.app-jetified-window-java-1.2.0-1 C:\Users\coolnet\.gradle\caches\transforms-3\0157f8871f2286b81f0b60455cb44671\transformed\jetified-window-java-1.2.0\res
+com.example.diabetes.app-core-1.13.1-2 C:\Users\coolnet\.gradle\caches\transforms-3\28ee8a5ebc96d117de5598ee6fce01ba\transformed\core-1.13.1\res
+com.example.diabetes.app-jetified-annotation-experimental-1.4.0-3 C:\Users\coolnet\.gradle\caches\transforms-3\32b4d53de8036b893442a53454eef505\transformed\jetified-annotation-experimental-1.4.0\res
+com.example.diabetes.app-jetified-tracing-1.2.0-4 C:\Users\coolnet\.gradle\caches\transforms-3\344804b99488c687b9494581b018a8c9\transformed\jetified-tracing-1.2.0\res
+com.example.diabetes.app-jetified-savedstate-1.2.1-5 C:\Users\coolnet\.gradle\caches\transforms-3\42e115ca81393979cdff36cce874f0ab\transformed\jetified-savedstate-1.2.1\res
+com.example.diabetes.app-jetified-profileinstaller-1.3.1-6 C:\Users\coolnet\.gradle\caches\transforms-3\497b559c30d96929b625a427f3dee739\transformed\jetified-profileinstaller-1.3.1\res
+com.example.diabetes.app-jetified-core-1.0.0-7 C:\Users\coolnet\.gradle\caches\transforms-3\4ff43cf3d056aae38d02ffded0cc6e24\transformed\jetified-core-1.0.0\res
+com.example.diabetes.app-jetified-lifecycle-livedata-core-ktx-2.7.0-8 C:\Users\coolnet\.gradle\caches\transforms-3\53851e427f91564da59a935205158479\transformed\jetified-lifecycle-livedata-core-ktx-2.7.0\res
+com.example.diabetes.app-jetified-core-ktx-1.13.1-9 C:\Users\coolnet\.gradle\caches\transforms-3\5847454f47d031053937666e3a5e82d8\transformed\jetified-core-ktx-1.13.1\res
+com.example.diabetes.app-jetified-lifecycle-viewmodel-savedstate-2.7.0-10 C:\Users\coolnet\.gradle\caches\transforms-3\5faa35d8b556276be34f51d63001a29f\transformed\jetified-lifecycle-viewmodel-savedstate-2.7.0\res
+com.example.diabetes.app-lifecycle-viewmodel-2.7.0-11 C:\Users\coolnet\.gradle\caches\transforms-3\6066a53547e8fbcf4f45946ad85f0e5d\transformed\lifecycle-viewmodel-2.7.0\res
+com.example.diabetes.app-fragment-1.7.1-12 C:\Users\coolnet\.gradle\caches\transforms-3\63d3b185799b2c098a0f6ed885ea8db1\transformed\fragment-1.7.1\res
+com.example.diabetes.app-jetified-lifecycle-process-2.7.0-13 C:\Users\coolnet\.gradle\caches\transforms-3\6f1de229824e3b626519c3b4ed1eee9b\transformed\jetified-lifecycle-process-2.7.0\res
+com.example.diabetes.app-jetified-startup-runtime-1.1.1-14 C:\Users\coolnet\.gradle\caches\transforms-3\7794f10e2cc1161d7666b6dd70a8eed0\transformed\jetified-startup-runtime-1.1.1\res
+com.example.diabetes.app-jetified-window-1.2.0-15 C:\Users\coolnet\.gradle\caches\transforms-3\a017c0c1c150e766625df730ca1d1522\transformed\jetified-window-1.2.0\res
+com.example.diabetes.app-lifecycle-livedata-core-2.7.0-16 C:\Users\coolnet\.gradle\caches\transforms-3\a66a87692f835751c9cebc5e6aca319b\transformed\lifecycle-livedata-core-2.7.0\res
+com.example.diabetes.app-jetified-activity-1.8.1-17 C:\Users\coolnet\.gradle\caches\transforms-3\aecaa94fd3010ebbc81c2fe40f782abe\transformed\jetified-activity-1.8.1\res
+com.example.diabetes.app-lifecycle-livedata-2.7.0-18 C:\Users\coolnet\.gradle\caches\transforms-3\c11b0fd8d42c1350d7f4e72974d231fa\transformed\lifecycle-livedata-2.7.0\res
+com.example.diabetes.app-lifecycle-runtime-2.7.0-19 C:\Users\coolnet\.gradle\caches\transforms-3\c3e60d8edb6a86f432de0791fcaa87bd\transformed\lifecycle-runtime-2.7.0\res
+com.example.diabetes.app-debug-20 D:\University\Graduation Project\Graduation_Project\diabetes\android\app\src\debug\res
+com.example.diabetes.app-main-21 D:\University\Graduation Project\Graduation_Project\diabetes\android\app\src\main\res
+com.example.diabetes.app-pngs-22 D:\University\Graduation Project\Graduation_Project\diabetes\build\app\generated\res\pngs\debug
+com.example.diabetes.app-resValues-23 D:\University\Graduation Project\Graduation_Project\diabetes\build\app\generated\res\resValues\debug
+com.example.diabetes.app-packageDebugResources-24 D:\University\Graduation Project\Graduation_Project\diabetes\build\app\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.example.diabetes.app-packageDebugResources-25 D:\University\Graduation Project\Graduation_Project\diabetes\build\app\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.example.diabetes.app-merged_res-26 D:\University\Graduation Project\Graduation_Project\diabetes\build\app\intermediates\merged_res\debug
