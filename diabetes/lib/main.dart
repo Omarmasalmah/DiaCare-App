@@ -1,6 +1,5 @@
-import 'package:diabetes/views/splash_screen/splash_screen.dart';
+import 'package:diabetes/pages/home_screen.dart';
 import 'package:flutter/material.dart';
-import 'consts/colors.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,7 +21,7 @@ class MyApp extends StatelessWidget {
       //  fontFamily: regular,
         
       ),
-      home: const SplashScreen(),
+      home: const HomeScreen(),
     );
   }
 }
