@@ -1,0 +1,11 @@
+flutter_native_splash:
+  android: true
+  ios: true
+  web: false
+
+  # Define colors
+  image: images/logo.png  # Path to your app logo
+  background_image: images/background.jpg 
+  
+
+

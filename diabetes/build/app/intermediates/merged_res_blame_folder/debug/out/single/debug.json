@@ -1,26 +1,74 @@
 [
     {
-        "merged": "com.example.diabetes.app-merged_res-26:/mipmap-xxhdpi_ic_launcher.png.flat",
-        "source": "com.example.diabetes.app-main-21:/mipmap-xxhdpi/ic_launcher.png"
+        "merged": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-merged_res-26:\\drawable-v21_launch_background.xml.flat",
+        "source": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-main-21:\\drawable-v21\\launch_background.xml"
+    },
+    {
+        "merged": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-merged_res-26:\\drawable-hdpi_branding.png.flat",
+        "source": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-main-21:\\drawable-hdpi\\branding.png"
+    },
+    {
+        "merged": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-merged_res-26:\\drawable-xxhdpi_branding.png.flat",
+        "source": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-main-21:\\drawable-xxhdpi\\branding.png"
+    },
+    {
+        "merged": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-merged_res-26:\\mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-main-21:\\mipmap-xxxhdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-merged_res-26:\\drawable-xxxhdpi_splash.png.flat",
+        "source": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-main-21:\\drawable-xxxhdpi\\splash.png"
+    },
+    {
+        "merged": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-merged_res-26:\\drawable-mdpi_splash.png.flat",
+        "source": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-main-21:\\drawable-mdpi\\splash.png"
+    },
+    {
+        "merged": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-merged_res-26:\\mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-main-21:\\mipmap-xxhdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-merged_res-26:\\mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-main-21:\\mipmap-xhdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-merged_res-26:\\drawable-mdpi_branding.png.flat",
+        "source": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-main-21:\\drawable-mdpi\\branding.png"
+    },
+    {
+        "merged": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-merged_res-26:\\mipmap-mdpi_ic_launcher.png.flat",
+        "source": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-main-21:\\mipmap-mdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-merged_res-26:\\mipmap-hdpi_ic_launcher.png.flat",
+        "source": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-main-21:\\mipmap-hdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-merged_res-26:\\drawable-xhdpi_branding.png.flat",
+        "source": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-main-21:\\drawable-xhdpi\\branding.png"
     },
     {
         "merged": "com.example.diabetes.app-merged_res-26:/drawable-v21_launch_background.xml.flat",
         "source": "com.example.diabetes.app-main-21:/drawable-v21/launch_background.xml"
     },
     {
-        "merged": "com.example.diabetes.app-merged_res-26:/mipmap-xhdpi_ic_launcher.png.flat",
-        "source": "com.example.diabetes.app-main-21:/mipmap-xhdpi/ic_launcher.png"
+        "merged": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-merged_res-26:\\drawable-xhdpi_splash.png.flat",
+        "source": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-main-21:\\drawable-xhdpi\\splash.png"
     },
     {
-        "merged": "com.example.diabetes.app-merged_res-26:/mipmap-mdpi_ic_launcher.png.flat",
-        "source": "com.example.diabetes.app-main-21:/mipmap-mdpi/ic_launcher.png"
+        "merged": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-merged_res-26:\\drawable-xxhdpi_splash.png.flat",
+        "source": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-main-21:\\drawable-xxhdpi\\splash.png"
     },
     {
-        "merged": "com.example.diabetes.app-merged_res-26:/mipmap-xxxhdpi_ic_launcher.png.flat",
-        "source": "com.example.diabetes.app-main-21:/mipmap-xxxhdpi/ic_launcher.png"
+        "merged": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-merged_res-26:\\drawable-hdpi_splash.png.flat",
+        "source": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-main-21:\\drawable-hdpi\\splash.png"
     },
     {
-        "merged": "com.example.diabetes.app-merged_res-26:/mipmap-hdpi_ic_launcher.png.flat",
-        "source": "com.example.diabetes.app-main-21:/mipmap-hdpi/ic_launcher.png"
+        "merged": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-merged_res-26:\\drawable-xxxhdpi_branding.png.flat",
+        "source": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-main-21:\\drawable-xxxhdpi\\branding.png"
+    },
+    {
+        "merged": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-merged_res-26:\\drawable-v21_background.png.flat",
+        "source": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-main-21:\\drawable-v21\\background.png"
     }
 ]
