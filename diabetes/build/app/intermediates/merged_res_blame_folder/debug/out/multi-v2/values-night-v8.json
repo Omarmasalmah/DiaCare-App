@@ -6,12 +6,12 @@
                 {
                     "source": "C:\\Users\\coolnet\\Desktop\\Grad_Project\\Graduation_Project\\diabetes\\android\\app\\src\\main\\res\\values-night\\styles.xml",
                     "from": {
-                        "startLines": "3,-1",
-                        "startColumns": "4,-1",
-                        "startOffsets": "172,-1",
-                        "endLines": "11,-1",
-                        "endColumns": "12,-1",
-                        "endOffsets": "747,-1"
+                        "startLines": "3,18",
+                        "startColumns": "4,4",
+                        "startOffsets": "175,1106",
+                        "endLines": "11,20",
+                        "endColumns": "12,12",
+                        "endOffsets": "757,1272"
                     },
                     "to": {
                         "startLines": "2,10",
@@ -20,30 +20,6 @@
                         "endLines": "9,12",
                         "endColumns": "12,12",
                         "endOffsets": "502,671"
-                    }
-                }
-            ]
-        },
-        {
-            "outputFile": "C:\\Users\\coolnet\\.gradle\\daemon\\8.3\\com.example.diabetes.app-mergeDebugResources-24:\\values-night-v8\\values-night-v8.xml",
-            "map": [
-                {
-                    "source": "C:\\Users\\coolnet\\Desktop\\Grad_Project\\Graduation_Project\\diabetes\\android\\app\\src\\main\\res\\values-night\\styles.xml",
-                    "from": {
-                        "startLines": "3,18",
-                        "startColumns": "4,4",
-                        "startOffsets": "172,1092",
-                        "endLines": "11,20",
-                        "endColumns": "12,12",
-                        "endOffsets": "745,1256"
-                    },
-                    "to": {
-                        "startLines": "2,10",
-                        "startColumns": "4,4",
-                        "startOffsets": "55,505",
-                        "endLines": "9,12",
-                        "endColumns": "12,12",
-                        "endOffsets": "500,669"
                     }
                 }
             ]

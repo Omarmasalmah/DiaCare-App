@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       //  fontFamily: regular,
         
       ),
-      home: const HomeScreen(),
+      home: HomeScreen(),
     );
   }
 }
