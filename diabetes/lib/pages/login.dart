@@ -21,8 +21,16 @@ class _LogInState extends State<LogIn> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(205, 164, 207, 167),
+      
       body: SafeArea(
-        child: Center(
+        child: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('images/login_background.jpg'),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: Center(
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -35,26 +43,27 @@ class _LogInState extends State<LogIn> {
                   Icons.lock,
                   size: 150,
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 5),
 
                 // Welcome
                 const Text(
                   'Welcome\n',
                   style: TextStyle(
-                    color: Color.fromARGB(255, 6, 3, 3),
-                    fontSize: 30,
+                    color: Color.fromARGB(255, 0, 0, 0),
+                    fontSize: 45,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(
                   height: 1.0,
                 ),
-
+                
                 // Username
                 MyTextField(
                   controller: widget.usernameController,
                   hint: 'Username',
                   obscure: false,
+                  prefixIcon: const Icon(Icons.mail),
                 ),
 
                 const SizedBox(
@@ -66,6 +75,7 @@ class _LogInState extends State<LogIn> {
                   controller: widget.passwordController,
                   hint: 'Password',
                   obscure: true,
+                  prefixIcon: const Icon(Icons.lock),
                 ),
 
                 const SizedBox(
@@ -81,7 +91,7 @@ class _LogInState extends State<LogIn> {
                       Text(
                         'Forget password?',
                         style: TextStyle(
-                          color: Color.fromARGB(255, 45, 42, 42),
+                          color: Color.fromARGB(255, 8, 5, 5),
                           fontSize: 15,
                         ),
                       ),
@@ -130,11 +140,11 @@ class _LogInState extends State<LogIn> {
                 const SizedBox(height: 20),
 
                 // google + facebook
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SquareTile(imagePath: 'images/Google.png'),
-                    const SizedBox(
+                    SizedBox(
                       width: 10.0,
                     ),
                     SquareTile(imagePath: 'images/facebook.png')
@@ -144,7 +154,7 @@ class _LogInState extends State<LogIn> {
                 const SizedBox(height: 20),
 
                 // Sign up
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
@@ -169,6 +179,8 @@ class _LogInState extends State<LogIn> {
           ),
         ),
       ),
+    ),
     );
+
   }
 }
