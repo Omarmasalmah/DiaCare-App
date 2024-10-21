@@ -21,6 +21,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    - images/
     - images/logo.png
     - images/diabetes_-scaled.jpg
     - images/background.jpg
