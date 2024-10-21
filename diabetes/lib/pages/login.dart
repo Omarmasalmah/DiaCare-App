@@ -99,14 +99,14 @@ class _LogInState extends State<LogIn> {
                   ),
                 ),
 
-                const SizedBox(height: 25.0),
+                const SizedBox(height: 18.0),
 
                 // Sign in button
                 MyButton(
                   onTap: widget.signUserIn,
                 ),
 
-                const SizedBox(height: 25),
+                const SizedBox(height: 20),
 
                 // Or continue with
                 const Padding(
@@ -164,7 +164,7 @@ class _LogInState extends State<LogIn> {
                         fontSize: 17,
                       ),
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: 6),
                     Text(
                       "Register now",
                       style: TextStyle(
@@ -173,7 +173,9 @@ class _LogInState extends State<LogIn> {
                       ),
                     ),
                   ],
-                )
+                ),
+                const SizedBox(height: 15),
+
               ],
             ),
           ),
