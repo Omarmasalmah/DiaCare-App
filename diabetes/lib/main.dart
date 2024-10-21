@@ -1,4 +1,5 @@
 import 'package:diabetes/pages/home_screen.dart';
+import 'package:diabetes/pages/login.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
       //  fontFamily: regular,
         
       ),
-      home: HomeScreen(),
+      home: LogIn(),
     );
   }
 }
