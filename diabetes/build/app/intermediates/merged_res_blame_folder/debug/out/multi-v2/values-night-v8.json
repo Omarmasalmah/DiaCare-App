@@ -4,7 +4,7 @@
             "outputFile": "com.example.diabetes.app-mergeDebugResources-24:/values-night-v8/values-night-v8.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\coolnet\\Desktop\\Grad_Project\\Graduation_Project\\diabetes\\android\\app\\src\\main\\res\\values-night\\styles.xml",
+                    "source": "C:\\Users\\user\\Desktop\\Grad project\\Graduation_Project\\diabetes\\android\\app\\src\\main\\res\\values-night\\styles.xml",
                     "from": {
                         "startLines": "3,18",
                         "startColumns": "4,4",

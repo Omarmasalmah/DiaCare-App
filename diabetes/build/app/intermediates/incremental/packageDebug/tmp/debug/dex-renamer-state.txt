@@ -1,9 +1,9 @@
-#Mon Oct 21 17:41:38 EEST 2024
-base.0=C\:\\Users\\coolnet\\Desktop\\Grad_Project\\Graduation_Project\\diabetes\\build\\app\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
-base.1=C\:\\Users\\coolnet\\Desktop\\Grad_Project\\Graduation_Project\\diabetes\\build\\app\\intermediates\\dex\\debug\\mergeLibDexDebug\\0\\classes.dex
-base.2=C\:\\Users\\coolnet\\Desktop\\Grad_Project\\Graduation_Project\\diabetes\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
-base.3=C\:\\Users\\coolnet\\Desktop\\Grad_Project\\Graduation_Project\\diabetes\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\14\\classes.dex
-base.4=C\:\\Users\\coolnet\\Desktop\\Grad_Project\\Graduation_Project\\diabetes\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\1\\classes.dex
+#Mon Oct 21 21:30:45 IDT 2024
+base.0=C\:\\Users\\user\\Desktop\\Grad project\\Graduation_Project\\diabetes\\build\\app\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
+base.1=C\:\\Users\\user\\Desktop\\Grad project\\Graduation_Project\\diabetes\\build\\app\\intermediates\\dex\\debug\\mergeLibDexDebug\\0\\classes.dex
+base.2=C\:\\Users\\user\\Desktop\\Grad project\\Graduation_Project\\diabetes\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
+base.3=C\:\\Users\\user\\Desktop\\Grad project\\Graduation_Project\\diabetes\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\14\\classes.dex
+base.4=C\:\\Users\\user\\Desktop\\Grad project\\Graduation_Project\\diabetes\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\1\\classes.dex
 path.0=classes.dex
 path.1=0/classes.dex
 path.2=0/classes.dex
