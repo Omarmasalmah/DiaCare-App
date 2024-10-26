@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "325798970573",
+    "project_id": "diabetes-a33a3",
+    "storage_bucket": "diabetes-a33a3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:325798970573:android:c88404d571da839040d584",
+        "android_client_info": {
+          "package_name": "com.example.diabetes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCV6Q4nQyPoK3qXbeOVZ3OP4QSrrqLVvZE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
