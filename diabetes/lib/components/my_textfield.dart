@@ -22,11 +22,11 @@ class MyTextField extends StatelessWidget {
             controller: controller,
             obscureText: obscure,
             decoration: InputDecoration(
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: const Color.fromARGB(255, 5, 1, 1)),
+              enabledBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: Color.fromARGB(255, 5, 1, 1)),
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: const Color.fromARGB(255, 211, 5, 5)),
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Color.fromARGB(255, 211, 5, 5)),
                 ),
                 fillColor: Colors.grey.shade200,
                 filled: true,
