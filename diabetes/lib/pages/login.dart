@@ -1,22 +1,87 @@
 import 'package:diabetes/components/my_button.dart';
 import 'package:diabetes/components/my_textfield.dart';
 import 'package:diabetes/components/square_tile.dart';
+//import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LogIn extends StatefulWidget {
-  LogIn({super.key});
-
-  // text editing controllers
-  final usernameController = TextEditingController();
-  final passwordController = TextEditingController();
-
-  void signUserIn() {}
+  const LogIn({super.key});
 
   @override
   State<LogIn> createState() => _LogInState();
 }
 
 class _LogInState extends State<LogIn> {
+  // Text editing controllers
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  // Error messages
+  String? emailError;
+  String? passwordError;
+
+  void signUserIn() async {
+    // Clear previous error messages
+    setState(() {
+      emailError = null;
+      passwordError = null;
+    });
+
+    // Validate email and password fields
+    if (emailController.text.isEmpty) {
+      setState(() {
+        emailError = 'Email cannot be empty.';
+      });
+      return; // Exit the function if email is empty
+    }
+    if (passwordController.text.isEmpty) {
+      setState(() {
+        passwordError = 'Password cannot be empty.';
+      });
+      return; // Exit the function if password is empty
+    }
+
+    // Loading indicator
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const Center(child: CircularProgressIndicator());
+      },
+    );
+
+    // Sign in user
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      // Close loading indicator
+      Navigator.pop(context);
+      // Navigate to the next screen or perform any other action
+    } on FirebaseAuthException catch (e) {
+      // Close loading indicator
+      Navigator.pop(context);
+
+      // Handle different error types
+      if (e.code == 'user-not-found') {
+        setState(() {
+          emailError = 'No user found for that email.';
+        });
+      } else if (e.code == 'wrong-password') {
+        setState(() {
+          passwordError = 'Incorrect password.';
+        });
+      } else {
+        setState(() {
+          //  emailError = 'Please check email & password.';
+          emailError = e.message;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,52 +99,63 @@ class _LogInState extends State<LogIn> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(
-                    height: 40.0,
-                  ),
-                  // logo
-                  const Icon(
-                    Icons.lock,
-                    size: 150,
-                  ),
+                  const SizedBox(height: 40.0),
+                  Image.asset('images/mobile-phone.png',
+                      height: 150, width: 150),
                   const SizedBox(height: 5),
-
-                  // Welcome
                   const Text(
-                    'Welcome\n',
+                    ' Welcome to',
                     style: TextStyle(
-                      color: Color.fromARGB(255, 0, 0, 0),
-                      fontSize: 45,
-                      fontWeight: FontWeight.bold,
-                    ),
+                        color: Color.fromARGB(255, 0, 0, 0),
+                        fontSize: 40,
+                        fontWeight: FontWeight.w500),
                   ),
-                  const SizedBox(
-                    height: 1.0,
+                  const Text(
+                    'DiaCare App ',
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 0, 0, 0),
+                        fontSize: 45,
+                        fontWeight: FontWeight.bold),
                   ),
+                  const SizedBox(height: 1.0),
 
-                  // Username
+                  // Email
                   MyTextField(
-                    controller: widget.usernameController,
-                    hint: 'Username',
+                    controller: emailController,
+                    hint: 'Email',
                     obscure: false,
                     prefixIcon: const Icon(Icons.mail),
                   ),
+                  if (emailError != null) ...[
+                    Text(
+                      emailError!,
+                      style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 14), // Increased font size
+                    ),
+                    const SizedBox(height: 10),
+                  ],
 
-                  const SizedBox(
-                    height: 10.0,
-                  ),
+                  const SizedBox(height: 10.0),
 
                   // Password
                   MyTextField(
-                    controller: widget.passwordController,
+                    controller: passwordController,
                     hint: 'Password',
                     obscure: true,
                     prefixIcon: const Icon(Icons.lock),
                   ),
+                  if (passwordError != null) ...[
+                    Text(
+                      passwordError!,
+                      style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 14), // Increased font size
+                    ),
+                    const SizedBox(height: 10),
+                  ],
 
-                  const SizedBox(
-                    height: 10.0,
-                  ),
+                  const SizedBox(height: 10.0),
 
                   // Forget password?
                   const Padding(
@@ -90,22 +166,21 @@ class _LogInState extends State<LogIn> {
                         Text(
                           'Forget password?',
                           style: TextStyle(
-                            color: Color.fromARGB(255, 8, 5, 5),
-                            fontSize: 15,
-                          ),
+                              color: Color.fromARGB(255, 8, 5, 5),
+                              fontSize: 15),
                         ),
                       ],
                     ),
                   ),
 
-                  const SizedBox(height: 25.0),
+                  const SizedBox(height: 18.0),
 
                   // Sign in button
                   MyButton(
-                    onTap: widget.signUserIn,
+                    onTap: signUserIn,
                   ),
 
-                  const SizedBox(height: 25),
+                  const SizedBox(height: 20),
 
                   // Or continue with
                   const Padding(
@@ -113,24 +188,21 @@ class _LogInState extends State<LogIn> {
                     child: Row(
                       children: [
                         Expanded(
-                          child: Divider(
-                            color: Color.fromARGB(255, 45, 42, 42),
-                          ),
+                          child:
+                              Divider(color: Color.fromARGB(255, 45, 42, 42)),
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 10.0),
                           child: Text(
                             'Or continue with',
                             style: TextStyle(
-                              color: Color.fromARGB(255, 45, 42, 42),
-                              fontSize: 15,
-                            ),
+                                color: Color.fromARGB(255, 45, 42, 42),
+                                fontSize: 15),
                           ),
                         ),
                         Expanded(
-                          child: Divider(
-                            color: Color.fromARGB(255, 45, 42, 42),
-                          ),
+                          child:
+                              Divider(color: Color.fromARGB(255, 45, 42, 42)),
                         ),
                       ],
                     ),
@@ -138,14 +210,12 @@ class _LogInState extends State<LogIn> {
 
                   const SizedBox(height: 20),
 
-                  // google + facebook
+                  // Google + Facebook
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SquareTile(imagePath: 'images/Google.png'),
-                      SizedBox(
-                        width: 10.0,
-                      ),
+                      SizedBox(width: 10.0),
                       SquareTile(imagePath: 'images/facebook.png')
                     ],
                   ),
@@ -159,20 +229,18 @@ class _LogInState extends State<LogIn> {
                       Text(
                         "Not a member?",
                         style: TextStyle(
-                          color: Color.fromARGB(255, 1, 1, 1),
-                          fontSize: 17,
-                        ),
+                            color: Color.fromARGB(255, 1, 1, 1), fontSize: 17),
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 6),
                       Text(
                         "Register now",
                         style: TextStyle(
-                          color: const Color.fromARGB(255, 14, 1, 187),
-                          fontSize: 17,
-                        ),
+                            color: Color.fromARGB(255, 14, 1, 187),
+                            fontSize: 17),
                       ),
                     ],
-                  )
+                  ),
+                  const SizedBox(height: 15),
                 ],
               ),
             ),

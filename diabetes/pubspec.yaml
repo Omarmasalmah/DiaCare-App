@@ -13,6 +13,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_native_splash: ^2.4.1
   firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1
 
 dev_dependencies:
   flutter_test:
@@ -26,6 +27,7 @@ flutter:
     - images/logo.png
     - images/diabetes_-scaled.jpg
     - images/background.jpg
+    - images/mobile-phone.png
 
 
 flutter_native_splash:
