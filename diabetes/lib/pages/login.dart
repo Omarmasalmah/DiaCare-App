@@ -163,11 +163,11 @@ class _LogInState extends State<LogIn> {
                           fontSize: 17,
                         ),
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 4),
                       Text(
                         "Register now",
                         style: TextStyle(
-                          color: const Color.fromARGB(255, 14, 1, 187),
+                          color: Color.fromARGB(255, 14, 1, 187),
                           fontSize: 17,
                         ),
                       ),
