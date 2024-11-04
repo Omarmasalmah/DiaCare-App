@@ -187,6 +187,7 @@ id view_tree_on_back_pressed_dispatcher_owner
 id view_tree_saved_state_registry_owner
 id view_tree_view_model_store_owner
 id visible_removing_fragment_view_tag
+integer google_play_services_version
 integer status_bar_notification_info_maxnum
 layout custom_dialog
 layout ime_base_split_test_activity
@@ -198,6 +199,7 @@ layout notification_template_icon_group
 layout notification_template_part_chronometer
 layout notification_template_part_time
 mipmap ic_launcher
+raw firebase_common_keep
 string androidx_startup
 string call_notification_answer_action
 string call_notification_answer_video_action
@@ -206,6 +208,13 @@ string call_notification_hang_up_action
 string call_notification_incoming_text
 string call_notification_ongoing_text
 string call_notification_screening_text
+string common_google_play_services_unknown_issue
+string gcm_defaultSenderId
+string google_api_key
+string google_app_id
+string google_crash_reporting_api_key
+string google_storage_bucket
+string project_id
 string status_bar_notification_info_overflow
 style LaunchTheme
 style NormalTheme

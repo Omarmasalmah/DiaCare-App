@@ -1,8 +1,15 @@
+import 'package:diabetes/firebase_options.dart';
 import 'package:diabetes/pages/home_screen.dart';
 import 'package:diabetes/pages/login.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const MyApp());
 }
 
@@ -16,11 +23,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
-      scaffoldBackgroundColor: Colors.transparent,
-      appBarTheme: const AppBarTheme(   
-        backgroundColor: Colors.transparent),
-      //  fontFamily: regular,
-        
+        scaffoldBackgroundColor: Colors.transparent,
+        appBarTheme: const AppBarTheme(backgroundColor: Colors.transparent),
+        //  fontFamily: regular,
       ),
       home: LogIn(),
     );

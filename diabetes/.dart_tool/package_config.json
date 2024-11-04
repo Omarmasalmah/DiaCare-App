@@ -74,6 +74,24 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "firebase_core",
+      "rootUri": "file:///C:/Users/coolnet/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_core-3.6.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "firebase_core_platform_interface",
+      "rootUri": "file:///C:/Users/coolnet/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_core_platform_interface-5.3.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "firebase_core_web",
+      "rootUri": "file:///C:/Users/coolnet/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_core_web-2.18.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
       "name": "flutter",
       "rootUri": "file:///C:/Users/coolnet/flutter/packages/flutter",
       "packageUri": "lib/",
@@ -170,6 +188,12 @@
       "languageVersion": "3.2"
     },
     {
+      "name": "plugin_platform_interface",
+      "rootUri": "file:///C:/Users/coolnet/AppData/Local/Pub/Cache/hosted/pub.dev/plugin_platform_interface-2.1.8",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "sky_engine",
       "rootUri": "file:///C:/Users/coolnet/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
@@ -236,6 +260,12 @@
       "languageVersion": "3.3"
     },
     {
+      "name": "web",
+      "rootUri": "file:///C:/Users/coolnet/AppData/Local/Pub/Cache/hosted/pub.dev/web-1.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
       "name": "xml",
       "rootUri": "file:///C:/Users/coolnet/AppData/Local/Pub/Cache/hosted/pub.dev/xml-6.5.0",
       "packageUri": "lib/",
@@ -254,7 +284,7 @@
       "languageVersion": "3.5"
     }
   ],
-  "generated": "2024-11-04T17:53:16.143879Z",
+  "generated": "2024-11-04T17:55:24.190902Z",
   "generator": "pub",
   "generatorVersion": "3.5.3",
   "flutterRoot": "file:///C:/Users/coolnet/flutter",
