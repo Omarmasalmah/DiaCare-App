@@ -1,6 +1,7 @@
 import 'package:diabetes/components/my_button.dart';
 import 'package:diabetes/components/my_textfield.dart';
 import 'package:diabetes/components/square_tile.dart';
+import 'package:diabetes/pages/home_screen.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -76,7 +77,11 @@ class _LogInState extends State<LogIn> {
       } else {
         setState(() {
           //  emailError = 'Please check email & password.';
-          emailError = e.message;
+          // emailError = e.message; //will be handled in the next step
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+          );
         });
       }
     }
