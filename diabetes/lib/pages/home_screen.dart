@@ -64,12 +64,12 @@ class DailyGlucoseCard extends StatelessWidget {
             SizedBox(height: 10),
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                'https://example.com/glucose_chart.png', // Replace with the URL of your image or use an AssetImage if local
-                height: 150,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
+              // child: Image.network(
+              //   'https://example.com/glucose_chart.png', // Replace with the URL of your image or use an AssetImage if local
+              //   height: 150,
+              //   width: double.infinity,
+              //   fit: BoxFit.cover,
+              // ),
             ),
           ],
         ),
