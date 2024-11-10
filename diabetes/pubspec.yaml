@@ -12,8 +12,10 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.8
   flutter_native_splash: ^2.4.1
+  fl_chart: ^0.60.0
   firebase_core: ^3.6.0
   firebase_auth: ^5.3.1
+
 
 dev_dependencies:
   flutter_test:

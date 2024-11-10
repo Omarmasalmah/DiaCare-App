@@ -118,7 +118,9 @@ class _LogInState extends State<LogIn> {
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 1.0),
+                  const SizedBox(height: 1.0),
 
+                  // Email
                   // Email
                   MyTextField(
                     controller: emailController,
@@ -174,12 +176,14 @@ class _LogInState extends State<LogIn> {
                   ),
 
                   const SizedBox(height: 18.0),
+                  const SizedBox(height: 18.0),
 
                   // Sign in button
                   MyButton(
                     onTap: signUserIn,
                   ),
 
+                  const SizedBox(height: 20),
                   const SizedBox(height: 20),
 
                   // Or continue with
@@ -211,10 +215,12 @@ class _LogInState extends State<LogIn> {
                   const SizedBox(height: 20),
 
                   // Google + Facebook
+                  // Google + Facebook
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SquareTile(imagePath: 'images/Google.png'),
+                      SizedBox(width: 10.0),
                       SizedBox(width: 10.0),
                       SquareTile(imagePath: 'images/facebook.png')
                     ],
@@ -231,7 +237,7 @@ class _LogInState extends State<LogIn> {
                         style: TextStyle(
                             color: Color.fromARGB(255, 1, 1, 1), fontSize: 17),
                       ),
-                      SizedBox(width: 4),
+                      SizedBox(width: 6),
                       Text(
                         "Register now",
                         style: TextStyle(
@@ -241,6 +247,7 @@ class _LogInState extends State<LogIn> {
                       ),
                     ],
                   ),
+
                   const SizedBox(height: 15),
                 ],
               ),
