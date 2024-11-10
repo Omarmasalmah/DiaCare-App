@@ -41,3 +41,4 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+diabetes/build/app/outputs/apk/debug/app-debug.apk
