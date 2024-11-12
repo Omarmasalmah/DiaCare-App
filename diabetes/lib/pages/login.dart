@@ -1,6 +1,7 @@
 import 'package:diabetes/components/my_button.dart';
 import 'package:diabetes/components/my_textfield.dart';
 import 'package:diabetes/components/square_tile.dart';
+import 'package:diabetes/pages/PhoneNumberPage.dart';
 import 'package:diabetes/pages/home_screen.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -234,20 +235,30 @@ class _LogInState extends State<LogIn> {
                   const SizedBox(height: 20),
 
                   // Sign up
-                  const Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
+                      const Text(
                         "Not a member?",
                         style: TextStyle(
                             color: Color.fromARGB(255, 1, 1, 1), fontSize: 17),
                       ),
-                      SizedBox(width: 6),
-                      Text(
-                        "Register now",
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 14, 1, 187),
-                          fontSize: 17,
+                      const SizedBox(width: 6),
+                      TextButton(
+                        onPressed: () {
+                          // Add your action here
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PhoneNumberPage()),
+                          );
+                        },
+                        child: const Text(
+                          "Register now",
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 14, 1, 187),
+                            fontSize: 17,
+                          ),
                         ),
                       ),
                     ],
