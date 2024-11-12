@@ -30,6 +30,8 @@ flutter:
     - fonts/  # Make sure this matches the actual directory where fonts are located
     - images/logo.png
     - images/diabetes_-scaled.jpg
+    - images/profile.jpg
+    - images/backProfile.jpg
     - images/background.jpg
     - fonts/Roboto-Regular.ttf
     - fonts/Roboto-Bold.ttf

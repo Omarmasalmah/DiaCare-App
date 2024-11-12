@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:diabetes/NavBar.dart';
 
 // class HomeScreen extends StatefulWidget {
 //   const HomeScreen({super.key});
@@ -18,6 +19,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: NavBar(),
       appBar: AppBar(
         title: Text('HealthTrack'),
         centerTitle: true,
