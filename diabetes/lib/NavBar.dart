@@ -11,10 +11,10 @@ class NavBar extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          UserAccountsDrawerHeader(
+          const UserAccountsDrawerHeader(
             accountName: Text('Mahmoud Hamdan'),
             accountEmail: Text('1201134@student.birzeit.edu'),
-            currentAccountPicture: const CircleAvatar(
+            currentAccountPicture: CircleAvatar(
               child: ClipOval(
                 child: Image(
                   image: AssetImage('images/profile.jpg'),
@@ -48,7 +48,8 @@ class NavBar extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => DiabetesFAQPage()),
+                MaterialPageRoute(
+                    builder: (context) => const DiabetesFAQPage()),
               );
             },
           ),
