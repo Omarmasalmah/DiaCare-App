@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:diabetes/pages/FAQpage.dart';
+import 'package:diabetes/pages/home_screen.dart';
 
 class NavBar extends StatelessWidget {
   const NavBar({super.key});
@@ -25,7 +27,7 @@ class NavBar extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.blue,
               image: DecorationImage(
-                image: AssetImage('images/back.jpg'),
+                image: AssetImage('images/backProfile.jpg'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -34,8 +36,46 @@ class NavBar extends StatelessWidget {
             title: const Text('Home'),
             leading: const Icon(Icons.home),
             onTap: () {
-              // Handle navigation to home
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HomeScreen()),
+              );
             },
+          ),
+          ListTile(
+            title: const Text('FAQ'),
+            leading: const Icon(Icons.question_answer),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DiabetesFAQPage()),
+              );
+            },
+          ),
+          ListTile(
+            title: const Text('Calculate Calories'),
+            leading: const Icon(Icons.calculate),
+            onTap: () => null,
+          ),
+          ListTile(
+            title: const Text('Chat'),
+            leading: const Icon(Icons.chat),
+            onTap: () => null,
+          ),
+          ListTile(
+            title: const Text('Meal Planning'),
+            leading: const Icon(Icons.launch),
+            onTap: () => null,
+          ),
+          ListTile(
+            title: const Text('Account Settings'),
+            leading: const Icon(Icons.settings),
+            onTap: () => null,
+          ),
+          ListTile(
+            title: const Text('Log Out'),
+            leading: const Icon(Icons.logout),
+            onTap: () => null,
           ),
           // Add more ListTiles for other navigation items here
         ],
