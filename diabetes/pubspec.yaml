@@ -31,6 +31,18 @@ flutter:
     - images/diabetes_-scaled.jpg
     - images/background.jpg
     # - images/mobile-phone.png
+    - assets/fonts/
+
+  fonts:
+  - family: CustomFont  # Replace with your font family name
+    fonts:
+      - asset: assets/fonts/YourFontFile.ttf  # Replace with the actual file name
+      - asset: assets/fonts/YourFontFile-Bold.ttf  # Optional: Bold variant
+        weight: 700  # Set the weight for bold
+      - asset: assets/fonts/YourFontFile-Italic.ttf  # Optional: Italic variant
+        style: italic  
+
+
 
 
 flutter_native_splash:
