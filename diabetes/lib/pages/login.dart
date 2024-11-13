@@ -6,6 +6,7 @@ import 'package:diabetes/pages/home_screen.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:diabetes/pages/ForgetPassPage.dart';
 
 class LogIn extends StatefulWidget {
   const LogIn({super.key});
@@ -166,16 +167,27 @@ class _LogInState extends State<LogIn> {
                   const SizedBox(height: 10.0),
 
                   // Forget password?
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 25.0),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Text(
-                          'Forget password?',
-                          style: TextStyle(
-                              color: Color.fromARGB(255, 8, 5, 5),
-                              fontSize: 15),
+                        TextButton(
+                          onPressed: () {
+                            // Add your action here
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ForgotPasswordPage()),
+                            );
+                          },
+                          child: const Text(
+                            "Forget password?",
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 86, 83, 83),
+                              fontSize: 17,
+                            ),
+                          ),
                         ),
                       ],
                     ),

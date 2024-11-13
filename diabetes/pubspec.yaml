@@ -16,6 +16,7 @@ dependencies:
   firebase_core: ^3.6.0
   firebase_auth: ^5.3.1
   intl_phone_number_input: ^0.7.4
+  fluttertoast: ^8.2.1
 
 dev_dependencies:
   flutter_test:
@@ -30,6 +31,7 @@ flutter:
     - fonts/  # Make sure this matches the actual directory where fonts are located
     - images/logo.png
     - images/diabetes_-scaled.jpg
+    - images/mobile-phone.png
     - images/profile.jpg
     - images/backProfile.jpg
     - images/background.jpg
