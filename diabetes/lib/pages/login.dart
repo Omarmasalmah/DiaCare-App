@@ -3,7 +3,6 @@ import 'package:diabetes/components/my_textfield.dart';
 import 'package:diabetes/components/square_tile.dart';
 import 'package:diabetes/pages/PhoneNumberPage.dart';
 import 'package:diabetes/pages/home_screen.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:diabetes/pages/ForgetPassPage.dart';
@@ -62,7 +61,12 @@ class _LogInState extends State<LogIn> {
 
       // Close loading indicator
       Navigator.pop(context);
-      // Navigate to the next screen or perform any other action
+
+      // Navigate to HomeScreen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
     } on FirebaseAuthException catch (e) {
       // Close loading indicator
       Navigator.pop(context);
@@ -78,12 +82,7 @@ class _LogInState extends State<LogIn> {
         });
       } else {
         setState(() {
-          //  emailError = 'Please check email & password.';
-          // emailError = e.message; //will be handled in the next step
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => HomeScreen()),
-          );
+          emailError = 'An error occurred. Please try again.';
         });
       }
     }
@@ -127,7 +126,6 @@ class _LogInState extends State<LogIn> {
                   const SizedBox(height: 1.0),
                   const SizedBox(height: 1.0),
 
-                  // Email
                   // Email
                   MyTextField(
                     controller: emailController,
@@ -233,12 +231,10 @@ class _LogInState extends State<LogIn> {
                   const SizedBox(height: 20),
 
                   // Google + Facebook
-                  // Google + Facebook
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SquareTile(imagePath: 'images/Google.png'),
-                      SizedBox(width: 10.0),
                       SizedBox(width: 10.0),
                       SquareTile(imagePath: 'images/facebook.png')
                     ],

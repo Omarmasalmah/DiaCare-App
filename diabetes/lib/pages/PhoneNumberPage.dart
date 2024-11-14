@@ -5,6 +5,7 @@ import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
 class PhoneNumberPage extends StatelessWidget {
   final TextEditingController controller = TextEditingController();
+  var phoneNumber;
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +35,7 @@ class PhoneNumberPage extends StatelessWidget {
               InternationalPhoneNumberInput(
                 onInputChanged: (PhoneNumber number) {
                   print(number.phoneNumber); // Access the complete number here
+                  phoneNumber = number.phoneNumber;
                 },
                 selectorConfig: SelectorConfig(
                   selectorType: PhoneInputSelectorType.DROPDOWN,
@@ -66,6 +68,8 @@ class PhoneNumberPage extends StatelessWidget {
                   style: TextStyle(fontSize: 16),
                 ),
                 onPressed: () {
+                  // final phoneNumber = controller.text.trim();
+                  print('phone number is $phoneNumber');
                   Navigator.push(
                       context,
                       MaterialPageRoute(

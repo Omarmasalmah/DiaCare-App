@@ -158,19 +158,24 @@ class _MainInfoPageState extends State<MainInfoPage> {
             ),
             SizedBox(height: 24),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-              ),
-              child: Text(
-                "Sign Up",
-                style: TextStyle(fontSize: 16),
-              ),
-              onPressed: () => signUp(context),
-            ),
+                child: Text(
+                  "Sign Up",
+                  style: TextStyle(fontSize: 16),
+                ),
+                onPressed: () {
+                  signUp(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LogIn()),
+                  );
+                }),
           ],
         ),
       ),
