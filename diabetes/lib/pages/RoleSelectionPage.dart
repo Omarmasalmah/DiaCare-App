@@ -2,6 +2,9 @@ import 'package:diabetes/pages/MainInfoPage.dart';
 import 'package:flutter/material.dart';
 
 class RoleSelectionPage extends StatefulWidget {
+  final String phoneNumber;
+  const RoleSelectionPage({Key? key, required this.phoneNumber})
+      : super(key: key);
   @override
   _RoleSelectionPageState createState() => _RoleSelectionPageState();
 }
@@ -85,7 +88,9 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => MainInfoPage()),
+                            builder: (context) =>
+                                MainInfoPage(phoneNumber: widget.phoneNumber),
+                          ),
                         );
                       }
                     : null, // Disable if no role is selected

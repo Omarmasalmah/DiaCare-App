@@ -4,6 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class MainInfoPage extends StatefulWidget {
+  final String phoneNumber; // Receive phone number as a parameter
+
+  const MainInfoPage({Key? key, required this.phoneNumber}) : super(key: key);
+
   @override
   _MainInfoPageState createState() => _MainInfoPageState();
 }
@@ -39,10 +43,17 @@ class _MainInfoPageState extends State<MainInfoPage> {
         password: passwordController.text.trim(),
       );
 
-      Toastmsg().showToast(
-          "User signed up successfully!, his email is ${credential.user?.email}");
+      // Send email verification
+      await credential.user?.sendEmailVerification();
 
-      // Navigator.pushNamed(context, '/home'); // Adjust to your home route
+      Toastmsg().showToast(
+          "User signed up successfully! A verification email has been sent to ${credential.user?.email}");
+
+      // Navigate to login page
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => LogIn()),
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Failed to sign up: $e")),
@@ -52,6 +63,7 @@ class _MainInfoPageState extends State<MainInfoPage> {
 
   @override
   Widget build(BuildContext context) {
+    var phoneNumber = widget.phoneNumber;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -116,24 +128,22 @@ class _MainInfoPageState extends State<MainInfoPage> {
             TextField(
               controller: passwordController,
               decoration: InputDecoration(
-                labelText: "Password",
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0)),
-                filled: true,
-                fillColor: Colors.grey[200],
-              ),
+                  labelText: "Password",
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0)),
+                  filled: true,
+                  fillColor: Colors.grey[200]),
               obscureText: true,
             ),
             SizedBox(height: 16),
             TextField(
               controller: confirmPasswordController,
               decoration: InputDecoration(
-                labelText: "Confirm Password",
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0)),
-                filled: true,
-                fillColor: Colors.grey[200],
-              ),
+                  labelText: "Confirm Password",
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0)),
+                  filled: true,
+                  fillColor: Colors.grey[200]),
               obscureText: true,
             ),
             SizedBox(height: 16),
@@ -158,24 +168,21 @@ class _MainInfoPageState extends State<MainInfoPage> {
             ),
             SizedBox(height: 24),
             ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.teal,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
                 ),
-                child: Text(
-                  "Sign Up",
-                  style: TextStyle(fontSize: 16),
-                ),
-                onPressed: () {
-                  signUp(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LogIn()),
-                  );
-                }),
+                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+              ),
+              child: Text(
+                "Sign Up",
+                style: TextStyle(fontSize: 16),
+              ),
+              onPressed: () {
+                signUp(context);
+              },
+            ),
           ],
         ),
       ),
