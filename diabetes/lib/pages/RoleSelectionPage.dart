@@ -88,8 +88,10 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                MainInfoPage(phoneNumber: widget.phoneNumber),
+                            builder: (context) => MainInfoPage(
+                              phoneNumber: widget.phoneNumber,
+                              selectedRole: selectedRole.toString(),
+                            ),
                           ),
                         );
                       }

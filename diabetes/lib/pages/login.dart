@@ -54,7 +54,7 @@ class _LogInState extends State<LogIn> {
 
     // Sign in user
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
@@ -62,11 +62,19 @@ class _LogInState extends State<LogIn> {
       // Close loading indicator
       Navigator.pop(context);
 
-      // Navigate to HomeScreen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
-      );
+      if (credential.user?.emailVerified ?? false) {
+        // Email is verified, navigate to the home screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+        );
+      } else {
+        // Email is not verified, show a message to the user
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text("Please verify your email before signing in.")),
+        );
+      }
     } on FirebaseAuthException catch (e) {
       // Close loading indicator
       Navigator.pop(context);

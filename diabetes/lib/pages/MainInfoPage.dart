@@ -2,11 +2,15 @@ import 'package:diabetes/pages/ToastMsg.dart';
 import 'package:diabetes/pages/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MainInfoPage extends StatefulWidget {
   final String phoneNumber; // Receive phone number as a parameter
+  final String selectedRole; // Receive selected role as a parameter
 
-  const MainInfoPage({Key? key, required this.phoneNumber}) : super(key: key);
+  const MainInfoPage(
+      {Key? key, required this.phoneNumber, required this.selectedRole})
+      : super(key: key);
 
   @override
   _MainInfoPageState createState() => _MainInfoPageState();
@@ -37,19 +41,47 @@ class _MainInfoPageState extends State<MainInfoPage> {
     }
 
     try {
+      // Create user with email and password in Firebase Authentication
       final credential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
 
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        print("User is authenticated: ${user.email}");
+      } else {
+        print("User is not authenticated");
+        return;
+      }
+
+      // Save additional user data in Firestore
+      await FirebaseFirestore.instance
+          .collection('Users') // The collection name (e.g., "users")
+          .doc(credential.user?.uid) // Use the user's UID as the document ID
+          .set({
+        'name': nameController.text.trim(),
+        'birthdate': birthdateController.text.trim(),
+        'phoneNumber': widget.phoneNumber,
+        'email': emailController.text.trim(),
+        'createdAt':
+            Timestamp.now(), // Optional: track when the user was created
+        'role': widget.selectedRole,
+      }).whenComplete(() {
+        print("User data added to Firestore");
+      }).catchError((error, statckTrace) {
+        print("Failed to add user data: $error");
+      });
+
       // Send email verification
       await credential.user?.sendEmailVerification();
 
       Toastmsg().showToast(
-          "User signed up successfully! A verification email has been sent to ${credential.user?.email}");
+        "User signed up successfully! A verification email has been sent to ${credential.user?.email}",
+      );
 
-      // Navigate to login page
+      // Navigate to the login page
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => LogIn()),
