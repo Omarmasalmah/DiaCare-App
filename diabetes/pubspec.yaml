@@ -18,6 +18,8 @@ dependencies:
   intl_phone_number_input: ^0.7.4
   fluttertoast: ^8.2.1
   cloud_firestore: ^5.4.4 # Use the latest version
+  flutter_localizations:
+        sdk: flutter
 
 dev_dependencies:
   flutter_test:
