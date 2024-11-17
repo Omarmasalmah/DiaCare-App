@@ -29,7 +29,7 @@ flutter:
 
   assets:
     - images/
-    - fonts/  # Make sure this matches the actual directory where fonts are located
+    - fonts/ # Make sure this matches the actual directory where fonts are located
     - images/logo.png
     - images/diabetes_-scaled.jpg
     - images/mobile-phone.png
@@ -39,8 +39,6 @@ flutter:
     - fonts/Roboto-Regular.ttf
     - fonts/Roboto-Bold.ttf
     - fonts/Roboto-Italic.ttf
-
-
   # fonts:
   #   - family: Roboto  # Font family name
   #     fonts:
@@ -49,10 +47,11 @@ flutter:
   #         weight: 700
   #       - asset: assets/fonts/Roboto-Italic.ttf   # Italic variant
   #         style: italic
-
 flutter_native_splash:
   image: images/logo.png
   background_image: images/background.jpg
   android: true
   ios: true
   fullscreen: true
+flutter_intl:
+  enabled: true
