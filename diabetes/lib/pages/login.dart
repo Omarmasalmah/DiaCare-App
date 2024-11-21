@@ -1,9 +1,11 @@
 import 'package:diabetes/components/my_button.dart';
 import 'package:diabetes/components/my_textfield.dart';
 import 'package:diabetes/components/square_tile.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
+import 'package:diabetes/pages/PhoneNumberPage.dart';
+import 'package:diabetes/pages/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:diabetes/pages/ForgetPassPage.dart';
 
 class LogIn extends StatefulWidget {
   const LogIn({super.key});
@@ -52,14 +54,27 @@ class _LogInState extends State<LogIn> {
 
     // Sign in user
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
 
       // Close loading indicator
       Navigator.pop(context);
-      // Navigate to the next screen or perform any other action
+
+      if (credential.user?.emailVerified ?? false) {
+        // Email is verified, navigate to the home screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+        );
+      } else {
+        // Email is not verified, show a message to the user
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text("Please verify your email before signing in.")),
+        );
+      }
     } on FirebaseAuthException catch (e) {
       // Close loading indicator
       Navigator.pop(context);
@@ -75,8 +90,7 @@ class _LogInState extends State<LogIn> {
         });
       } else {
         setState(() {
-          //  emailError = 'Please check email & password.';
-          emailError = e.message;
+          emailError = 'An error occurred. Please try again.';
         });
       }
     }
@@ -121,7 +135,6 @@ class _LogInState extends State<LogIn> {
                   const SizedBox(height: 1.0),
 
                   // Email
-                  // Email
                   MyTextField(
                     controller: emailController,
                     hint: 'Email',
@@ -160,16 +173,27 @@ class _LogInState extends State<LogIn> {
                   const SizedBox(height: 10.0),
 
                   // Forget password?
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 25.0),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Text(
-                          'Forget password?',
-                          style: TextStyle(
-                              color: Color.fromARGB(255, 8, 5, 5),
-                              fontSize: 15),
+                        TextButton(
+                          onPressed: () {
+                            // Add your action here
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ForgotPasswordPage()),
+                            );
+                          },
+                          child: const Text(
+                            "Forget password?",
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 86, 83, 83),
+                              fontSize: 17,
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -215,12 +239,10 @@ class _LogInState extends State<LogIn> {
                   const SizedBox(height: 20),
 
                   // Google + Facebook
-                  // Google + Facebook
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SquareTile(imagePath: 'images/Google.png'),
-                      SizedBox(width: 10.0),
                       SizedBox(width: 10.0),
                       SquareTile(imagePath: 'images/facebook.png')
                     ],
@@ -229,20 +251,30 @@ class _LogInState extends State<LogIn> {
                   const SizedBox(height: 20),
 
                   // Sign up
-                  const Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
+                      const Text(
                         "Not a member?",
                         style: TextStyle(
                             color: Color.fromARGB(255, 1, 1, 1), fontSize: 17),
                       ),
-                      SizedBox(width: 6),
-                      Text(
-                        "Register now",
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 14, 1, 187),
-                          fontSize: 17,
+                      const SizedBox(width: 6),
+                      TextButton(
+                        onPressed: () {
+                          // Add your action here
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PhoneNumberPage()),
+                          );
+                        },
+                        child: const Text(
+                          "Register now",
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 14, 1, 187),
+                            fontSize: 17,
+                          ),
                         ),
                       ),
                     ],

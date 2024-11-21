@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "325798970573",
     "project_id": "diabetes-a33a3",
-    "storage_bucket": "diabetes-a33a3.appspot.com"
+    "storage_bucket": "diabetes-a33a3.firebasestorage.app"
   },
   "client": [
     {

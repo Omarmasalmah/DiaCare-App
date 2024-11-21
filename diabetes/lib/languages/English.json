@@ -1,0 +1,16 @@
+{
+    "welcome": "Welcome to",
+    "appTitle": "DiaCare App",
+    "email": "Email",
+    "emailError": "Email cannot be empty.",
+    "password": "Password",
+    "passwordError": "Password cannot be empty.",
+    "forgetPassword": "Forget password?",
+    "signIn": "Sign In",
+    "continueWith": "Or continue with",
+    "notAMember": "Not a member?",
+    "registerNow": "Register now",
+    "userNotFound": "No user found for that email.",
+    "incorrectPassword": "Incorrect password."
+  }
+  

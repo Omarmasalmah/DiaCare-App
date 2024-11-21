@@ -4,4 +4,9 @@
          to allow setting breakpoints, to provide hot reload, etc.
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
+
+    <application
+        android:usesCleartextTraffic="true"> <!-- Allowing cleartext traffic for testing; set this to false in production -->
+        <!-- Other application configurations go here -->
+    </application>
 </manifest>

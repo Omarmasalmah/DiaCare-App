@@ -15,7 +15,11 @@ dependencies:
   fl_chart: ^0.60.0
   firebase_core: ^3.6.0
   firebase_auth: ^5.3.1
-
+  intl_phone_number_input: ^0.7.4
+  fluttertoast: ^8.2.1
+  cloud_firestore: ^5.4.4 # Use the latest version
+  flutter_localizations:
+        sdk: flutter
 
 dev_dependencies:
   flutter_test:
@@ -24,18 +28,32 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
   assets:
     - images/
+    - fonts/ # Make sure this matches the actual directory where fonts are located
     - images/logo.png
     - images/diabetes_-scaled.jpg
+    - images/mobile-phone.png
+    - images/profile.jpg
+    - images/backProfile.jpg
     - images/background.jpg
-    # - images/mobile-phone.png
-
-
+    - fonts/Roboto-Regular.ttf
+    - fonts/Roboto-Bold.ttf
+    - fonts/Roboto-Italic.ttf
+  # fonts:
+  #   - family: Roboto  # Font family name
+  #     fonts:
+  #       - asset: assets/fonts/Roboto-Regular.ttf  # Regular font
+  #       - asset: assets/fonts/Roboto-Bold.ttf     # Bold variant
+  #         weight: 700
+  #       - asset: assets/fonts/Roboto-Italic.ttf   # Italic variant
+  #         style: italic
 flutter_native_splash:
-  image: images/logo.png  # Path to your app logo
+  image: images/logo.png
   background_image: images/background.jpg
-  #branding: images/brand.jpg
-  android: true  # Enable for Android
-  ios: true  # Enable for iOS
-  fullscreen: true  # Make the splash screen fullscreen
+  android: true
+  ios: true
+  fullscreen: true
+flutter_intl:
+  enabled: true
