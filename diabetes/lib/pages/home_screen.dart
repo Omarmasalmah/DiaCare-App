@@ -1,19 +1,6 @@
+import 'package:diabetes/pages/ReadingsEntry.dart';
 import 'package:flutter/material.dart';
 import 'package:diabetes/NavBar.dart';
-
-// class HomeScreen extends StatefulWidget {
-//   const HomeScreen({super.key});
-
-//   @override
-//   State<HomeScreen> createState() => _HomeScreenState();
-// }
-
-// class _HomeScreenState extends State<HomeScreen> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return const Placeholder();
-//   }
-// }
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -51,29 +38,38 @@ class HomeScreen extends StatelessWidget {
 class DailyGlucoseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Daily Glucose Level',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              // child: Image.network(
-              //   'https://example.com/glucose_chart.png', // Replace with the URL of your image or use an AssetImage if local
-              //   height: 150,
-              //   width: double.infinity,
-              //   fit: BoxFit.cover,
-              // ),
-            ),
-          ],
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => DiabetesPage()), // Navigate to DiabetesPage
+        );
+      },
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        elevation: 4,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Daily Glucose Level',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                // child: Image.network(
+                //   'https://example.com/glucose_chart.png', // Replace with the URL of your image or use an AssetImage if local
+                //   height: 150,
+                //   width: double.infinity,
+                //   fit: BoxFit.cover,
+                // ),
+              ),
+            ],
+          ),
         ),
       ),
     );
