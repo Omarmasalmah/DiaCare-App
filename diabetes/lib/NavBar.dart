@@ -1,3 +1,5 @@
+import 'package:diabetes/pages/UserListPage.dart';
+import 'package:diabetes/pages/chatPage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -5,8 +7,15 @@ import 'package:diabetes/pages/FAQpage.dart';
 import 'package:diabetes/pages/home_screen.dart';
 import 'package:diabetes/pages/login.dart';
 
-class NavBar extends StatelessWidget {
+class NavBar extends StatefulWidget {
   const NavBar({super.key});
+
+  @override
+  _NavBarState createState() => _NavBarState();
+}
+
+class _NavBarState extends State<NavBar> {
+  Map<String, dynamic>? _userProfile;
 
   Future<Map<String, dynamic>?> getUserProfile() async {
     User? user = FirebaseAuth.instance.currentUser;
@@ -15,9 +24,23 @@ class NavBar extends StatelessWidget {
           .collection('Users')
           .doc(user.uid)
           .get();
-      return userProfile.data() as Map<String, dynamic>?;
+      var data = userProfile.data() as Map<String, dynamic>?;
+      if (data != null) {
+        data['email'] = user.email; // Add email to the profile data
+      }
+      return data;
     }
     return null;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUserProfile().then((profile) {
+      setState(() {
+        _userProfile = profile;
+      });
+    });
   }
 
   void _signOut(BuildContext context) async {
@@ -62,100 +85,26 @@ class NavBar extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          FutureBuilder<Map<String, dynamic>?>(
-            future: getUserProfile(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const UserAccountsDrawerHeader(
-                  accountName: Text('Loading...'),
-                  accountEmail: Text('Loading...'),
-                  currentAccountPicture: CircleAvatar(
-                    child: ClipOval(
-                      child: Image(
-                        image: AssetImage('images/profile.jpg'),
-                        width: 90,
-                        height: 90,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    image: DecorationImage(
-                      image: AssetImage('images/backProfile.jpg'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                );
-              } else if (snapshot.hasError) {
-                return const UserAccountsDrawerHeader(
-                  accountName: Text('Error'),
-                  accountEmail: Text('Error'),
-                  currentAccountPicture: CircleAvatar(
-                    child: ClipOval(
-                      child: Image(
-                        image: AssetImage('images/profile.jpg'),
-                        width: 90,
-                        height: 90,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    image: DecorationImage(
-                      image: AssetImage('images/backProfile.jpg'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                );
-              } else if (snapshot.hasData) {
-                var userProfile = snapshot.data;
-                return UserAccountsDrawerHeader(
-                  accountName: Text(userProfile?['name'] ?? 'No Name'),
-                  accountEmail: Text(userProfile?['email'] ?? 'No Email'),
-                  currentAccountPicture: CircleAvatar(
-                    child: ClipOval(
-                      child: Image(
-                        image: AssetImage('images/profile.jpg'),
-                        width: 90,
-                        height: 90,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  decoration: const BoxDecoration(
-                    color: Colors.blue,
-                    image: DecorationImage(
-                      image: AssetImage('images/backProfile.jpg'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                );
-              } else {
-                return const UserAccountsDrawerHeader(
-                  accountName: Text('No User'),
-                  accountEmail: Text('No User'),
-                  currentAccountPicture: CircleAvatar(
-                    child: ClipOval(
-                      child: Image(
-                        image: AssetImage('images/profile.jpg'),
-                        width: 90,
-                        height: 90,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    image: DecorationImage(
-                      image: AssetImage('images/backProfile.jpg'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                );
-              }
-            },
+          UserAccountsDrawerHeader(
+            accountName: Text(_userProfile?['name'] ?? 'Loading...'),
+            accountEmail: Text(_userProfile?['email'] ?? 'Loading...'),
+            currentAccountPicture: const CircleAvatar(
+              child: ClipOval(
+                child: Image(
+                  image: AssetImage('images/profile.jpg'),
+                  width: 90,
+                  height: 90,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            decoration: const BoxDecoration(
+              color: Colors.blue,
+              image: DecorationImage(
+                image: AssetImage('images/backProfile.jpg'),
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
           ListTile(
             title: const Text('Home'),
@@ -186,7 +135,32 @@ class NavBar extends StatelessWidget {
           ListTile(
             title: const Text('Chat'),
             leading: const Icon(Icons.chat),
-            onTap: () => null,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        UserListPage()), // Navigate to UserListPage
+              );
+            },
+            // onTap: () {
+            //   if (_userProfile != null && _userProfile!['email'] != null) {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => ChatPage(),
+            //         settings: RouteSettings(
+            //           arguments: _userProfile![
+            //               'email'], // Pass the email as an argument
+            //         ),
+            //       ),
+            //     );
+            //   } else {
+            //     ScaffoldMessenger.of(context).showSnackBar(
+            //       const SnackBar(content: Text('User profile not loaded yet')),
+            //     );
+            //   }
+            // },
           ),
           ListTile(
             title: const Text('Meal Planning'),

@@ -16,7 +16,7 @@ dependencies:
   firebase_auth: ^5.3.1
   intl_phone_number_input: ^0.7.4
   fluttertoast: ^8.2.1
-  cloud_firestore: ^5.4.4 # Use the latest version
+  cloud_firestore: ^5.5.0 # Use the latest version
   flutter_localizations:
         sdk: flutter
   fl_chart: ^0.69.1
@@ -37,6 +37,7 @@ flutter:
     - images/diabetes_-scaled.jpg
     - images/mobile-phone.png
     - images/profile.jpg
+    - images/chat.jpg
     - images/backProfile.jpg
     - images/background.jpg
     - fonts/Roboto-Regular.ttf
