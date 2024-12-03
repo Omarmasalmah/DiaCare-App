@@ -43,6 +43,11 @@ flutter:
     - fonts/Roboto-Regular.ttf
     - fonts/Roboto-Bold.ttf
     - fonts/Roboto-Italic.ttf
+    - fonts/Times-New-Roman.ttf
+  fonts:
+    - family: TimesNewRoman
+      fonts:
+        - asset: fonts/Times-New-Roman.ttf
   # fonts:
   #   - family: Roboto  # Font family name
   #     fonts:
