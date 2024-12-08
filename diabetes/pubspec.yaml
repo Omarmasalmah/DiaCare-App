@@ -21,6 +21,9 @@ dependencies:
         sdk: flutter
   fl_chart: ^0.69.1
   numberpicker: ^2.1.0
+  google_sign_in: ^6.2.2
+  flutter_facebook_auth: ^7.1.1
+  local_auth: ^2.1.7
 
 dev_dependencies:
   flutter_test:
@@ -40,6 +43,11 @@ flutter:
     - images/chat.jpg
     - images/backProfile.jpg
     - images/background.jpg
+    - images/newdoctor.png
+    - images/newsport.png
+    - images/remind.png
+    - images/welcome.png
+    - images/track.png
     - fonts/Roboto-Regular.ttf
     - fonts/Roboto-Bold.ttf
     - fonts/Roboto-Italic.ttf

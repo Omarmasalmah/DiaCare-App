@@ -12,7 +12,21 @@
           "package_name": "com.example.diabetes"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "325798970573-er8n9jlsh82otj7rvkmd76c851angk1p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.diabetes",
+            "certificate_hash": "036901afc4e3f7e171a0e8b691b815faa8368068"
+          }
+        },
+        {
+          "client_id": "325798970573-sv55ruf88m9lekqi6si6dl5qi4cc7kcj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCV6Q4nQyPoK3qXbeOVZ3OP4QSrrqLVvZE"

@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diabetes/pages/FAQpage.dart';
 import 'package:diabetes/pages/home_screen.dart';
 import 'package:diabetes/pages/login.dart';
+import 'package:diabetes/pages/AccountSettings.dart';
 
 class NavBar extends StatefulWidget {
   const NavBar({super.key});
@@ -170,7 +171,14 @@ class _NavBarState extends State<NavBar> {
           ListTile(
             title: const Text('Account Settings'),
             leading: const Icon(Icons.settings),
-            onTap: () => null,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        AccountSettingsPage()), // Navigate to UserListPage
+              );
+            },
           ),
           ListTile(
             title: const Text('Log Out'),

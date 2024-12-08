@@ -1,5 +1,8 @@
 import 'package:diabetes/firebase_options.dart';
 import 'package:diabetes/generated/l10n.dart';
+import 'package:diabetes/pages/home_screen.dart';
+import 'package:diabetes/pages/OnBoardingScreen.dart';
+
 //import 'package:diabetes/pages/home_screen.dart';
 import 'package:diabetes/pages/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -47,7 +50,14 @@ class MyApp extends StatelessWidget {
         appBarTheme: const AppBarTheme(backgroundColor: Colors.transparent),
         //  fontFamily: regular,
       ),
-      home: LogIn(),
+      // initialRoute: '/',
+      // routes: {
+      //   '/': (context) => OnboardingScreen(),
+      //   '/login': (context) => LogIn(),
+      //   '/home': (context) => HomeScreen(),
+      // },
+      //home: LogIn(),
+      home: OnboardingScreen(),
     );
   }
 }

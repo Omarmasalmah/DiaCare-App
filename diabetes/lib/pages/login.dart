@@ -5,6 +5,8 @@ import 'package:diabetes/pages/PhoneNumberPage.dart';
 import 'package:diabetes/pages/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:diabetes/pages/ForgetPassPage.dart';
 
 class LogIn extends StatefulWidget {
@@ -95,6 +97,57 @@ class _LogInState extends State<LogIn> {
       }
     }
   }
+
+  Future<void> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) {
+        return; // The user canceled the sign-in
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to sign in with Google: $e")),
+      );
+    }
+  }
+
+  // Future<void> signInWithFacebook() async {
+  //   try {
+  //     final LoginResult result = await FacebookAuth.instance.login();
+  //     if (result.status == LoginStatus.success) {
+  //       final AuthCredential credential =
+  //           FacebookAuthProvider.credential(result.accessToken!.token);
+  //       await FirebaseAuth.instance.signInWithCredential(credential);
+  //       Navigator.pushReplacement(
+  //         context,
+  //         MaterialPageRoute(builder: (context) => HomeScreen()),
+  //       );
+  //     } else {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //             content:
+  //                 Text("Failed to sign in with Facebook: ${result.message}")),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text("Failed to sign in with Facebook: $e")),
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -239,12 +292,18 @@ class _LogInState extends State<LogIn> {
                   const SizedBox(height: 20),
 
                   // Google + Facebook
-                  const Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SquareTile(imagePath: 'images/Google.png'),
+                      GestureDetector(
+                        onTap: signInWithGoogle,
+                        child: SquareTile(imagePath: 'images/Google.png'),
+                      ),
                       SizedBox(width: 10.0),
-                      SquareTile(imagePath: 'images/facebook.png')
+                      GestureDetector(
+                        //onTap: signInWithFacebook,
+                        child: SquareTile(imagePath: 'images/facebook.png'),
+                      ),
                     ],
                   ),
 
