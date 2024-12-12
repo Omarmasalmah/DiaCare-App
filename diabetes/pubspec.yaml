@@ -24,6 +24,12 @@ dependencies:
   google_sign_in: ^6.2.2
   flutter_facebook_auth: ^7.1.1
   local_auth: ^2.1.7
+  image_picker: ^0.8.7+4
+  firebase_storage: ^12.0.0
+
+
+
+
 
 dev_dependencies:
   flutter_test:
@@ -47,6 +53,7 @@ flutter:
     - images/newsport.png
     - images/remind.png
     - images/welcome.png
+    - images/NoProfilePic.png
     - images/track.png
     - fonts/Roboto-Regular.ttf
     - fonts/Roboto-Bold.ttf
