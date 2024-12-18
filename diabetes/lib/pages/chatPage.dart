@@ -269,7 +269,10 @@ class _ChatPageState extends State<ChatPage> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Chat with $recipientName'),
+            Text(
+              'Chat with $recipientName',
+              style: TextStyle(color: Colors.white),
+            ),
           ],
         ),
         centerTitle: true,
@@ -304,37 +307,35 @@ class _ChatPageState extends State<ChatPage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16),
-                  child: TextField(
-                    controller: controller,
-                    onSubmitted: (data) {
-                      messages.add(
-                        {
-                          kMessage: data,
-                          kCreatedAt: DateTime.now(),
-                          'id': recipientEmail
-                        },
-                      );
-                      controller.clear();
-                      _controller.animateTo(0,
-                          duration: Duration(milliseconds: 500),
-                          curve: Curves.easeIn);
-                    },
-                    decoration: InputDecoration(
-                      hintText: 'Send Message',
-                      suffixIcon: Icon(
-                        Icons.send,
-                        color: kPrimaryColor,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: controller,
+                          onSubmitted: (data) => _sendMessage(data),
+                          decoration: InputDecoration(
+                            hintText: 'Send Message',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(
+                                color: kPrimaryColor,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide(
+                      SizedBox(width: 8),
+                      GestureDetector(
+                        onTap: () => _sendMessage(controller.text),
+                        child: Icon(
+                          Icons.send,
                           color: kPrimaryColor,
                         ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
               ],
@@ -348,6 +349,19 @@ class _ChatPageState extends State<ChatPage> {
           }
         },
       ),
+    );
+  }
+
+  void _sendMessage(String data) {
+    if (data.trim().isEmpty) return;
+    messages.add(
+      {kMessage: data, kCreatedAt: DateTime.now(), 'id': recipientEmail},
+    );
+    controller.clear();
+    _controller.animateTo(
+      0,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeIn,
     );
   }
 }

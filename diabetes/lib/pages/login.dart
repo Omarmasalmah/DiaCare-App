@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diabetes/components/my_button.dart';
 import 'package:diabetes/components/my_textfield.dart';
 import 'package:diabetes/components/square_tile.dart';
@@ -98,28 +99,92 @@ class _LogInState extends State<LogIn> {
     }
   }
 
-  Future<void> signInWithGoogle() async {
+  // Future<void> signInWithGoogle() async {
+  //   try {
+  //     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+  //     if (googleUser == null) {
+  //       return; // The user canceled the sign-in
+  //     }
+
+  //     final GoogleSignInAuthentication googleAuth =
+  //         await googleUser.authentication;
+  //     final AuthCredential credential = GoogleAuthProvider.credential(
+  //       accessToken: googleAuth.accessToken,
+  //       idToken: googleAuth.idToken,
+  //     );
+
+  //     await FirebaseAuth.instance.signInWithCredential(credential);
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(builder: (context) => HomeScreen()),
+  //     );
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text("Failed to sign in with Google: $e")),
+  //     );
+  //   }
+  // }
+
+  Future<void> signInWithGoogle(BuildContext context) async {
     try {
+      // Trigger the Google Sign-In flow
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
       if (googleUser == null) {
-        return; // The user canceled the sign-in
+        // The user canceled the sign-in
+        return;
       }
 
+      // Obtain the Google Sign-In authentication details
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
-      final AuthCredential credential = GoogleAuthProvider.credential(
+
+      // Create a credential using the Google Auth details
+      final OAuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      await FirebaseAuth.instance.signInWithCredential(credential);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
-      );
+      // Sign in to Firebase with the credential
+      final UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+
+      final User? user = userCredential.user;
+
+      if (user != null) {
+        // Check if the user already exists in Firestore
+        final userDoc =
+            FirebaseFirestore.instance.collection('Users').doc(user.uid);
+
+        final userSnapshot = await userDoc.get();
+
+        if (!userSnapshot.exists) {
+          // If the user does not exist, add them to Firestore
+          await userDoc.set({
+            'name': user.displayName ?? 'No Name', // Name from Google Account
+            'email': user.email ?? '', // Email from Google Account
+            'phoneNumber': user.phoneNumber ??
+                '', // Phone number from Google Account, if available
+            'profileImage':
+                'images/NoProfilePic.png', // Profile image from Google Account
+            'createdAt': Timestamp.now(),
+            'role': 'Google User', // Customize the role if needed
+          });
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Signed in as ${user.displayName}")),
+        );
+
+        // Navigate to the Home Screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+        );
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to sign in with Google: $e")),
+        SnackBar(content: Text("Google Sign-In failed: $e")),
       );
     }
   }
@@ -296,14 +361,25 @@ class _LogInState extends State<LogIn> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       GestureDetector(
-                        onTap: signInWithGoogle,
+                        onTap: () => signInWithGoogle(context),
+                        // onTap: () async {
+                        //   final UserCredential? userCredential =
+                        //       await signInWithGoogle();
+                        //   if (userCredential != null) {
+                        //     Navigator.pushReplacement(
+                        //       context,
+                        //       MaterialPageRoute(
+                        //           builder: (context) => HomeScreen()),
+                        //     );
+                        //   }
+                        // },
                         child: SquareTile(imagePath: 'images/Google.png'),
                       ),
                       SizedBox(width: 10.0),
-                      GestureDetector(
-                        //onTap: signInWithFacebook,
-                        child: SquareTile(imagePath: 'images/facebook.png'),
-                      ),
+                      // GestureDetector(
+                      //   //onTap: signInWithFacebook,
+                      //   child: SquareTile(imagePath: 'images/facebook.png'),
+                      // ),
                     ],
                   ),
 

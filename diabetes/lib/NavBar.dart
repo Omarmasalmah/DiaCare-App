@@ -89,14 +89,25 @@ class _NavBarState extends State<NavBar> {
           UserAccountsDrawerHeader(
             accountName: Text(_userProfile?['name'] ?? 'Loading...'),
             accountEmail: Text(_userProfile?['email'] ?? 'Loading...'),
-            currentAccountPicture: const CircleAvatar(
+            currentAccountPicture: CircleAvatar(
               child: ClipOval(
-                child: Image(
-                  image: AssetImage('images/profile.jpg'),
-                  width: 90,
-                  height: 90,
-                  fit: BoxFit.cover,
-                ),
+                child: _userProfile?['profileImage'] != null &&
+                        _userProfile!['profileImage'].isNotEmpty &&
+                        Uri.tryParse(_userProfile!['profileImage'])
+                                ?.hasAbsolutePath ==
+                            true
+                    ? Image.network(
+                        _userProfile!['profileImage'],
+                        width: 90,
+                        height: 90,
+                        fit: BoxFit.cover,
+                      )
+                    : Image.asset(
+                        'images/NoProfilePic.png', // Fallback asset image
+                        width: 90,
+                        height: 90,
+                        fit: BoxFit.cover,
+                      ),
               ),
             ),
             decoration: const BoxDecoration(
