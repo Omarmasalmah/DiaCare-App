@@ -7,6 +7,7 @@ import 'package:diabetes/pages/FAQpage.dart';
 import 'package:diabetes/pages/home_screen.dart';
 import 'package:diabetes/pages/login.dart';
 import 'package:diabetes/pages/AccountSettings.dart';
+import 'package:diabetes/pages/MainCalc.dart';
 
 class NavBar extends StatefulWidget {
   const NavBar({super.key});
@@ -142,7 +143,14 @@ class _NavBarState extends State<NavBar> {
           ListTile(
             title: const Text('Calculate Calories'),
             leading: const Icon(Icons.calculate),
-            onTap: () => null,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        MainCalc()), // Navigate to UserListPage
+              );
+            },
           ),
           ListTile(
             title: const Text('Chat'),

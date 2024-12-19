@@ -43,7 +43,17 @@ flutter:
   assets:
     - images/
     - fonts/ # Make sure this matches the actual directory where fonts are located
-    - images/logo.png
+    - assets/images/
+    - assets/images/FruitsandVegetables/
+    - assets/images/Soups/
+    - assets/images/ColdDrinks/
+    - assets/images/hotdrinks/
+    - assets/images/candies/
+    - assets/images/lunch/
+    - assets/images/SaladsAndAppetizers/
+    - assets/images/breads/
+    - assets/images/Diary/
+    - assets/images/Breakfast/
     - images/diabetes_-scaled.jpg
     - images/mobile-phone.png
     - images/profile.jpg
