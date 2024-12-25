@@ -9,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:diabetes/pages/ForgetPassPage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LogIn extends StatefulWidget {
   const LogIn({super.key});
@@ -26,27 +27,101 @@ class _LogInState extends State<LogIn> {
   String? emailError;
   String? passwordError;
 
-  void signUserIn() async {
-    // Clear previous error messages
-    setState(() {
-      emailError = null;
-      passwordError = null;
-    });
+  bool rememberMe = false;
 
-    // Validate email and password fields
-    if (emailController.text.isEmpty) {
-      setState(() {
-        emailError = 'Email cannot be empty.';
-      });
-      return; // Exit the function if email is empty
-    }
-    if (passwordController.text.isEmpty) {
-      setState(() {
-        passwordError = 'Password cannot be empty.';
-      });
-      return; // Exit the function if password is empty
-    }
+  // Last use : 19/12/2024
+  // void signUserIn() async {
+  //   // Clear previous error messages
+  //   setState(() {
+  //     emailError = null;
+  //     passwordError = null;
+  //   });
 
+  //   // Validate email and password fields
+  //   if (emailController.text.isEmpty) {
+  //     setState(() {
+  //       emailError = 'Email cannot be empty.';
+  //     });
+  //     return; // Exit the function if email is empty
+  //   }
+  //   if (passwordController.text.isEmpty) {
+  //     setState(() {
+  //       passwordError = 'Password cannot be empty.';
+  //     });
+  //     return; // Exit the function if password is empty
+  //   }
+
+  //   // Loading indicator
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) {
+  //       return const Center(child: CircularProgressIndicator());
+  //     },
+  //   );
+
+  //   // Sign in user
+  //   try {
+  //     final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+  //       email: emailController.text.trim(),
+  //       password: passwordController.text.trim(),
+  //     );
+
+  //     // Close loading indicator
+  //     Navigator.pop(context);
+
+  //     if (credential.user?.emailVerified ?? false) {
+  //       // Email is verified, navigate to the home screen
+  //       Navigator.pushReplacement(
+  //         context,
+  //         MaterialPageRoute(builder: (context) => HomeScreen()),
+  //       );
+  //     } else {
+  //       // Email is not verified, show a message to the user
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //             content: Text("Please verify your email before signing in.")),
+  //       );
+  //     }
+  //   } on FirebaseAuthException catch (e) {
+  //     // Close loading indicator
+  //     Navigator.pop(context);
+
+  //     // Handle different error types
+  //     if (e.code == 'user-not-found') {
+  //       setState(() {
+  //         emailError = 'No user found for that email.';
+  //       });
+  //     } else if (e.code == 'wrong-password') {
+  //       setState(() {
+  //         passwordError = 'Incorrect password.';
+  //       });
+  //     } else {
+  //       setState(() {
+  //         emailError = 'An error occurred. Please try again.';
+  //       });
+  //     }
+  //   }
+  // }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkForStoredCredentials();
+  }
+
+  Future<void> _checkForStoredCredentials() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedEmail = prefs.getString('email');
+    final storedPassword = prefs.getString('password');
+
+    if (storedEmail != null && storedPassword != null) {
+      emailController.text = storedEmail;
+      passwordController.text = storedPassword;
+      _signUserIn(storedEmail, storedPassword);
+    }
+  }
+
+  Future<void> _signUserIn(String email, String password) async {
     // Loading indicator
     showDialog(
       context: context,
@@ -58,8 +133,8 @@ class _LogInState extends State<LogIn> {
     // Sign in user
     try {
       final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
+        email: email.trim(),
+        password: password.trim(),
       );
 
       // Close loading indicator
@@ -84,19 +159,56 @@ class _LogInState extends State<LogIn> {
 
       // Handle different error types
       if (e.code == 'user-not-found') {
-        setState(() {
-          emailError = 'No user found for that email.';
-        });
+        if (mounted) {
+          setState(() {
+            emailError = 'No user found for that email.';
+          });
+        }
       } else if (e.code == 'wrong-password') {
-        setState(() {
-          passwordError = 'Incorrect password.';
-        });
+        if (mounted) {
+          setState(() {
+            passwordError = 'Incorrect password.';
+          });
+        }
       } else {
-        setState(() {
-          emailError = 'An error occurred. Please try again.';
-        });
+        if (mounted) {
+          setState(() {
+            emailError = 'An error occurred. Please try again.';
+          });
+        }
       }
     }
+  }
+
+  void signUserIn() async {
+    // Clear previous error messages
+    if (mounted) {
+      setState(() {
+        emailError = null;
+        passwordError = null;
+      });
+    }
+
+    // Validate email and password fields
+    if (emailController.text.isEmpty) {
+      if (mounted) {
+        setState(() {
+          emailError = 'Email cannot be empty.';
+        });
+      }
+      return; // Exit the function if email is empty
+    }
+    if (passwordController.text.isEmpty) {
+      if (mounted) {
+        setState(() {
+          passwordError = 'Password cannot be empty.';
+        });
+      }
+      return; // Exit the function if password is empty
+    }
+
+    // Call _signUserIn with the entered email and password
+    _signUserIn(emailController.text, passwordController.text);
   }
 
   // Future<void> signInWithGoogle() async {
@@ -320,10 +432,24 @@ class _LogInState extends State<LogIn> {
                   const SizedBox(height: 18.0),
                   const SizedBox(height: 18.0),
 
-                  // Sign in button
-                  MyButton(
-                    onTap: signUserIn,
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: rememberMe,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            rememberMe = value ?? false;
+                          });
+                        },
+                      ),
+                      Text('Remember Me'),
+                      MyButton(
+                        onTap: signUserIn,
+                      ),
+                    ],
                   ),
+
+                  // Sign in button
 
                   const SizedBox(height: 20),
                   const SizedBox(height: 20),

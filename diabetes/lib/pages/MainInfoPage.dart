@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:numberpicker/numberpicker.dart';
 
 class MainInfoPage extends StatefulWidget {
   final String phoneNumber; // Receive phone number as a parameter
@@ -30,6 +31,9 @@ class _MainInfoPageState extends State<MainInfoPage> {
   bool _isChecked = false;
   File? _image;
   final ImagePicker _picker = ImagePicker();
+  String selectedDiabetesType = "Pre";
+  String selectedGender = "Male";
+  int selectedWeight = 70;
 
   // Future<void> signUp(BuildContext context) async {
   //   if (!_isChecked) {
@@ -143,6 +147,9 @@ class _MainInfoPageState extends State<MainInfoPage> {
         'createdAt': Timestamp.now(),
         'role': widget.selectedRole,
         'profileImage': imageUrl,
+        'diabetesType': selectedDiabetesType,
+        'gender': selectedGender,
+        'weight': selectedWeight,
       });
 
       await credential.user!.sendEmailVerification();
@@ -180,6 +187,99 @@ class _MainInfoPageState extends State<MainInfoPage> {
     }
   }
 
+  Widget _buildTextField(
+      TextEditingController controller, String label, IconData icon) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDropdown(String label, String value, List<String> items,
+      ValueChanged<String?> onChanged) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: 8),
+        DropdownButtonFormField<String>(
+          value: value,
+          onChanged: onChanged,
+          items: items.map<DropdownMenuItem<String>>((String item) {
+            return DropdownMenuItem<String>(
+              value: item,
+              child: Text(item),
+            );
+          }).toList(),
+          decoration: InputDecoration(
+            labelText: label,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showTermsAndConditions() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Terms and Conditions'),
+          content: SingleChildScrollView(
+            child: Text(
+              'Here are the terms and conditions...',
+              // Add your terms and conditions text here
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildWeightPicker() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Weight (kg)',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        SizedBox(height: 8),
+        Container(
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: NumberPicker(
+            value: selectedWeight,
+            minValue: 30,
+            maxValue: 200,
+            onChanged: (int value) {
+              setState(() {
+                selectedWeight = value;
+              });
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var phoneNumber = widget.phoneNumber;
@@ -198,33 +298,25 @@ class _MainInfoPageState extends State<MainInfoPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            GestureDetector(
-              onTap: _pickImage,
-              child: CircleAvatar(
-                radius: 50,
-                backgroundImage: _image != null
-                    ? FileImage(_image!)
-                    : AssetImage('images/NoProfilePic.png') as ImageProvider,
-              ),
-            ),
+            // GestureDetector(
+            //   onTap: _pickImage,
+            //   child: CircleAvatar(
+            //     radius: 50,
+            //     backgroundImage: _image != null
+            //         ? FileImage(_image!)
+            //         : AssetImage('images/NoProfilePic.png') as ImageProvider,
+            //   ),
+            // ),
             SizedBox(height: 16),
-            TextField(
-              controller: nameController,
-              decoration: InputDecoration(
-                labelText: "Name",
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0)),
-                filled: true,
-                fillColor: Colors.grey[200],
-              ),
-            ),
+            _buildTextField(nameController, 'Name', Icons.person),
             SizedBox(height: 16),
             TextField(
               controller: birthdateController,
               decoration: InputDecoration(
+                prefixIcon: Icon(Icons.calendar_today),
                 labelText: "Birthdate",
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0)),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 filled: true,
                 fillColor: Colors.grey[200],
               ),
@@ -243,38 +335,55 @@ class _MainInfoPageState extends State<MainInfoPage> {
               },
             ),
             SizedBox(height: 16),
-            TextField(
-              controller: emailController,
-              decoration: InputDecoration(
-                labelText: "Email",
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0)),
-                filled: true,
-                fillColor: Colors.grey[200],
+            _buildDropdown(
+                'Diabetes Type', selectedDiabetesType, ['Pre', '1', '2'],
+                (String? newValue) {
+              setState(() {
+                selectedDiabetesType = newValue!;
+              });
+            }),
+            SizedBox(height: 16),
+            Container(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  Text('Gender : '),
+                  Radio<String>(
+                    value: 'Male',
+                    groupValue: selectedGender,
+                    onChanged: (String? value) {
+                      setState(() {
+                        selectedGender = value!;
+                      });
+                    },
+                  ),
+                  Text('Male'),
+                  Radio<String>(
+                    value: 'Female',
+                    groupValue: selectedGender,
+                    onChanged: (String? value) {
+                      setState(() {
+                        selectedGender = value!;
+                      });
+                    },
+                  ),
+                  Text('Female'),
+                ],
               ),
             ),
             SizedBox(height: 16),
-            TextField(
-              controller: passwordController,
-              decoration: InputDecoration(
-                  labelText: "Password",
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0)),
-                  filled: true,
-                  fillColor: Colors.grey[200]),
-              obscureText: true,
-            ),
+            _buildWeightPicker(),
             SizedBox(height: 16),
-            TextField(
-              controller: confirmPasswordController,
-              decoration: InputDecoration(
-                  labelText: "Confirm Password",
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0)),
-                  filled: true,
-                  fillColor: Colors.grey[200]),
-              obscureText: true,
-            ),
+            _buildTextField(emailController, 'Email', Icons.email),
+            SizedBox(height: 16),
+            _buildTextField(passwordController, 'Password', Icons.password),
+            SizedBox(height: 16),
+            _buildTextField(confirmPasswordController, 'Confirm Password',
+                Icons.password_sharp),
             SizedBox(height: 16),
             Row(
               children: [
@@ -288,9 +397,16 @@ class _MainInfoPageState extends State<MainInfoPage> {
                   activeColor: Colors.teal,
                 ),
                 Expanded(
-                  child: Text(
-                    "I accept the terms and conditions",
-                    style: TextStyle(fontSize: 14),
+                  child: GestureDetector(
+                    onTap: _showTermsAndConditions,
+                    child: Text(
+                      "I accept the terms and conditions",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
                   ),
                 ),
               ],

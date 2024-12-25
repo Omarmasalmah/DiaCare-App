@@ -141,7 +141,7 @@ class _NavBarState extends State<NavBar> {
             },
           ),
           ListTile(
-            title: const Text('Calculate Calories'),
+            title: const Text('Insulin & Calories Calculator'),
             leading: const Icon(Icons.calculate),
             onTap: () {
               Navigator.push(
