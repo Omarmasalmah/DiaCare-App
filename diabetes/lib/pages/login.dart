@@ -106,6 +106,7 @@ class _LogInState extends State<LogIn> {
   @override
   void initState() {
     super.initState();
+    print('Init State Called');
     _checkForStoredCredentials();
   }
 
@@ -113,11 +114,19 @@ class _LogInState extends State<LogIn> {
     final prefs = await SharedPreferences.getInstance();
     final storedEmail = prefs.getString('email');
     final storedPassword = prefs.getString('password');
+    final storedRememberMe = prefs.getBool('rememberMe') ?? false;
 
-    if (storedEmail != null && storedPassword != null) {
+    print('Stored Email: $storedEmail');
+    print('Stored Password: $storedPassword');
+    print('Stored Remember Me: $storedRememberMe');
+
+    if (storedRememberMe && storedEmail != null && storedPassword != null) {
       emailController.text = storedEmail;
       passwordController.text = storedPassword;
-      _signUserIn(storedEmail, storedPassword);
+      setState(() {
+        rememberMe = storedRememberMe;
+      });
+      //_signUserIn(storedEmail, storedPassword);
     }
   }
 
@@ -141,11 +150,22 @@ class _LogInState extends State<LogIn> {
       Navigator.pop(context);
 
       if (credential.user?.emailVerified ?? false) {
+        // Store the email and password if remember me is checked
+        if (rememberMe) {
+          final prefs = await SharedPreferences.getInstance();
+          prefs.setString('email', email);
+          prefs.setString('password', password);
+          prefs.setBool('rememberMe', rememberMe);
+          print('Credentials stored in SharedPreferences');
+        }
+
         // Email is verified, navigate to the home screen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomeScreen()),
-        );
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+          );
+        }
       } else {
         // Email is not verified, show a message to the user
         ScaffoldMessenger.of(context).showSnackBar(
@@ -408,46 +428,51 @@ class _LogInState extends State<LogIn> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        TextButton(
-                          onPressed: () {
-                            // Add your action here
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ForgotPasswordPage()),
-                            );
-                          },
-                          child: const Text(
-                            "Forget password?",
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 86, 83, 83),
-                              fontSize: 17,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                // Add your action here
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          ForgotPasswordPage()),
+                                );
+                              },
+                              child: const Text(
+                                "Forget password?",
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 86, 83, 83),
+                                  fontSize: 17,
+                                ),
+                              ),
                             ),
-                          ),
+                            Row(
+                              children: [
+                                Checkbox(
+                                  value: rememberMe,
+                                  onChanged: (bool? value) {
+                                    setState(() {
+                                      rememberMe = value ?? false;
+                                    });
+                                  },
+                                ),
+                                Text('Remember Me'),
+                              ],
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
-
-                  const SizedBox(height: 18.0),
-                  const SizedBox(height: 18.0),
-
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: rememberMe,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            rememberMe = value ?? false;
-                          });
-                        },
-                      ),
-                      Text('Remember Me'),
-                      MyButton(
-                        onTap: signUserIn,
-                      ),
-                    ],
+                  MyButton(
+                    onTap: signUserIn,
                   ),
+
+                  const SizedBox(height: 18.0),
+                  const SizedBox(height: 18.0),
 
                   // Sign in button
 

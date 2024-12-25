@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'chatPage.dart'; // Import the ChatPage
@@ -27,13 +28,21 @@ class UserListPage extends StatelessWidget {
                   title: Text(userName),
                   subtitle: Text(userEmail),
                   onTap: () {
-                    Navigator.push(
+                    Navigator.pushNamed(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => ChatPage(),
-                        settings: RouteSettings(arguments: userEmail),
-                      ),
+                      ChatPage.id,
+                      arguments: {
+                        'email': userEmail,
+                        'name': userName,
+                      },
                     );
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) => ChatPage(),
+                    //     settings: RouteSettings(arguments: userEmail),
+                    //   ),
+                    // );
                   },
                 );
               },

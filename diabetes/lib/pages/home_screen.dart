@@ -1,6 +1,8 @@
 import 'package:diabetes/pages/ReadingsEntry.dart';
+import 'package:diabetes/pages/UserListPage.dart';
 import 'package:flutter/material.dart';
 import 'package:diabetes/NavBar.dart';
+import 'package:diabetes/pages/ChatPage.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -10,6 +12,20 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('HealthTrack'),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.chat_bubble_outline_rounded),
+            onPressed: () {
+              // Navigate to the chat screen or handle the chat action
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        UserListPage()), // Replace ChatScreen with your actual chat screen widget
+              );
+            },
+          ),
+        ],
       ),
       backgroundColor: Color(0xFFF0F8FF),
       body: Padding(

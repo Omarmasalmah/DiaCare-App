@@ -1,5 +1,6 @@
 import 'package:diabetes/firebase_options.dart';
 import 'package:diabetes/generated/l10n.dart';
+import 'package:diabetes/pages/chatPage.dart';
 import 'package:diabetes/pages/home_screen.dart';
 import 'package:diabetes/pages/OnBoardingScreen.dart';
 
@@ -50,6 +51,10 @@ class MyApp extends StatelessWidget {
         appBarTheme: const AppBarTheme(backgroundColor: Colors.transparent),
         //  fontFamily: regular,
       ),
+      routes: {
+        //'/': (context) => HomeScreen(),
+        ChatPage.id: (context) => ChatPage(),
+      },
       // initialRoute: '/',
       // routes: {
       //   '/': (context) => OnboardingScreen(),
