@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:numberpicker/numberpicker.dart';
+import 'package:diabetes/constants.dart';
 
 class MainInfoPage extends StatefulWidget {
   final String phoneNumber; // Receive phone number as a parameter
@@ -235,7 +236,7 @@ class _MainInfoPageState extends State<MainInfoPage> {
           title: Text('Terms and Conditions'),
           content: SingleChildScrollView(
             child: Text(
-              'Here are the terms and conditions...',
+              termsAndConditions,
               // Add your terms and conditions text here
             ),
           ),
@@ -335,9 +336,8 @@ class _MainInfoPageState extends State<MainInfoPage> {
               },
             ),
             SizedBox(height: 16),
-            _buildDropdown(
-                'Diabetes Type', selectedDiabetesType, ['Pre', '1', '2'],
-                (String? newValue) {
+            _buildDropdown('Diabetes Type', selectedDiabetesType,
+                ['Pre', 'Type I', 'Type II'], (String? newValue) {
               setState(() {
                 selectedDiabetesType = newValue!;
               });

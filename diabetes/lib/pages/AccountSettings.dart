@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:diabetes/constants.dart';
+import 'package:diabetes/pages/EmergencyContactsPage.dart';
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -36,6 +38,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
   String? _profileImageUrl;
 
   Map<String, dynamic>? _userProfile;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   //Uint8List? pickedImage;
 
@@ -185,6 +188,90 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
   //     }
   //   }
   // }
+
+  Future<void> _showChangePasswordDialog() async {
+    final TextEditingController oldPasswordController = TextEditingController();
+    final TextEditingController newPasswordController = TextEditingController();
+
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // User must tap button to dismiss
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Change Password'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Enter your old password and new password.'),
+                TextField(
+                  controller: oldPasswordController,
+                  decoration: InputDecoration(
+                    labelText: 'Old Password',
+                    hintText: 'Enter your old password',
+                  ),
+                  obscureText: true,
+                ),
+                TextField(
+                  controller: newPasswordController,
+                  decoration: InputDecoration(
+                    labelText: 'New Password',
+                    hintText: 'Enter your new password',
+                  ),
+                  obscureText: true,
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Update'),
+              onPressed: () async {
+                final oldPassword = oldPasswordController.text.trim();
+                final newPassword = newPasswordController.text.trim();
+                if (oldPassword.isNotEmpty && newPassword.isNotEmpty) {
+                  try {
+                    User? user = _auth.currentUser;
+                    if (user != null) {
+                      // Re-authenticate the user
+                      AuthCredential credential = EmailAuthProvider.credential(
+                        email: user.email!,
+                        password: oldPassword,
+                      );
+                      await user.reauthenticateWithCredential(credential);
+
+                      // Update the password
+                      await user.updatePassword(newPassword);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text('Password updated successfully.')),
+                      );
+                      Navigator.of(context).pop();
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Failed to update password.')),
+                    );
+                  }
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content:
+                            Text('Please enter both old and new passwords.')),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   Future<bool> _authenticateWithFingerprint() async {
     final LocalAuthentication auth = LocalAuthentication();
@@ -470,21 +557,62 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
             title: Text("Change Password"),
             trailing: Icon(Icons.lock),
             onTap: () {
-              // Handle change password
+              _showChangePasswordDialog();
             },
           ),
           ListTile(
             title: Text("Privacy Policy"),
             trailing: Icon(Icons.description),
             onTap: () {
-              // Open privacy policy
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Privacy Policy'),
+                    content: SingleChildScrollView(
+                      child: Text(
+                        privacyPolicy,
+                        // Add your terms and conditions text here
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('Close'),
+                      ),
+                    ],
+                  );
+                },
+              );
             },
           ),
           ListTile(
             title: Text("Terms and Conditions"),
             trailing: Icon(Icons.description),
             onTap: () {
-              // Open terms and conditions
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Terms and Conditions'),
+                    content: SingleChildScrollView(
+                      child: Text(
+                        termsAndConditions,
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('Close'),
+                      ),
+                    ],
+                  );
+                },
+              );
             },
           ),
         ],
@@ -501,7 +629,11 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
             title: Text("Emergency Contacts"),
             trailing: Icon(Icons.contacts),
             onTap: () {
-              // Handle emergency contacts
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => EmergencyContactsPage()),
+              );
             },
           ),
           ListTile(
