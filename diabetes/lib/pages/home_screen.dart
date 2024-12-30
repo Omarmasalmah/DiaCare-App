@@ -5,6 +5,12 @@ import 'package:diabetes/NavBar.dart';
 import 'package:diabetes/pages/ChatPage.dart';
 
 class HomeScreen extends StatelessWidget {
+  final double glucoseAverage = 120.0; // Replace with your calculated average
+  final double burnedCalories = 1500.0;
+  final double earnedCalories = 1800.0;
+  final int stepsWalked = 10000;
+  final double someOtherValue = 75.0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -80,6 +80,12 @@ class _ChatPageState extends State<ChatPage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: kPrimaryColor,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         title: Text(
           'Chat with $recipientName',
           style: TextStyle(color: Colors.white),

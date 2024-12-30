@@ -45,6 +45,149 @@ class OnboardingScreenState extends State<OnboardingScreen> {
     },
   ];
 
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Container(
+//         decoration: const BoxDecoration(
+//           gradient: LinearGradient(
+//             colors: [
+//               Color.fromARGB(255, 60, 185, 60),
+//               Color.fromARGB(255, 64, 137, 173),
+//             ],
+//             begin: Alignment.topLeft,
+//             end: Alignment.bottomRight,
+//           ),
+//         ),
+//         child: Column(
+//           children: [
+//             Expanded(
+//               child: Stack(
+//                 children: [
+//                   PageView.builder(
+//                     controller: _pageController,
+//                     itemCount: onboardingData.length,
+//                     onPageChanged: (index) {
+//                       setState(() {
+//                         _currentPage = index;
+//                       });
+//                     },
+//                     itemBuilder: (context, index) {
+//                       return OnboardingContent(
+//                         image: onboardingData[index]["image"]!,
+//                         title: onboardingData[index]["title"]!,
+//                         description: onboardingData[index]["description"]!,
+//                       );
+//                     },
+//                   ),
+//                   Positioned(
+//                     bottom: 20,
+//                     left: 0,
+//                     right: 0,
+//                     child: Column(
+//                       children: [
+//                         Row(
+//                           mainAxisAlignment: MainAxisAlignment.center,
+//                           children: List.generate(
+//                             onboardingData.length,
+//                             (index) =>
+//                                 AnimatedDot(isActive: index == _currentPage),
+//                           ),
+//                         ),
+//                         const SizedBox(height: 20),
+//                         Row(
+//                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                           children: [
+//                             if (_currentPage > 0)
+//                               TextButton(
+//                                 onPressed: () {
+//                                   _pageController.previousPage(
+//                                     duration: const Duration(milliseconds: 500),
+//                                     curve: Curves.ease,
+//                                   );
+//                                 },
+//                                 child: const Text(
+//                                   "Back",
+//                                   style: TextStyle(
+//                                     fontSize: 18,
+//                                     fontWeight: FontWeight.bold,
+//                                     color: Colors.white,
+//                                   ),
+//                                 ),
+//                               ),
+//                             if (_currentPage < onboardingData.length - 1)
+//                               Expanded(
+//                                 child: Align(
+//                                   alignment: Alignment.centerRight,
+//                                   child: TextButton(
+//                                     onPressed: () {
+//                                       _pageController.nextPage(
+//                                         duration:
+//                                             const Duration(milliseconds: 500),
+//                                         curve: Curves.ease,
+//                                       );
+//                                     },
+//                                     child: const Text(
+//                                       "Next",
+//                                       style: TextStyle(
+//                                         fontSize: 18,
+//                                         fontWeight: FontWeight.bold,
+//                                         color: Colors.white,
+//                                       ),
+//                                     ),
+//                                   ),
+//                                 ),
+//                               ),
+//                             if (_currentPage == onboardingData.length - 1)
+//                               Positioned(
+//                                 bottom:
+//                                     40, // Adjust this value to change vertical placement
+//                                 left: 0,
+//                                 right: 0,
+//                                 child: Center(
+//                                   child: TextButton(
+//                                     onPressed: () {
+//                                       Navigator.push(
+//                                         context,
+//                                         MaterialPageRoute(
+//                                             builder: (context) =>
+//                                                 const LogIn()),
+//                                       );
+//                                     },
+//                                     style: TextButton.styleFrom(
+//                                       padding: const EdgeInsets.symmetric(
+//                                         horizontal: 40,
+//                                         vertical: 15,
+//                                       ),
+//                                       backgroundColor: Colors
+//                                           .transparent, // Ensure no background color
+//                                     ),
+//                                     child: const Text(
+//                                       "Get Started",
+//                                       style: TextStyle(
+//                                         fontSize: 18,
+//                                         fontWeight: FontWeight.bold,
+//                                         color: Colors.white,
+//                                       ),
+//                                     ),
+//                                   ),
+//                                 ),
+//                               ),
+//                           ],
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -138,46 +281,45 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                                   ),
                                 ),
                               ),
-                            if (_currentPage == onboardingData.length - 1)
-                              Positioned(
-                                bottom:
-                                    40, // Adjust this value to change vertical placement
-                                left: 0,
-                                right: 0,
-                                child: Center(
-                                  child: TextButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const LogIn()),
-                                      );
-                                    },
-                                    style: TextButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 40,
-                                        vertical: 15,
-                                      ),
-                                      backgroundColor: Colors
-                                          .transparent, // Ensure no background color
-                                    ),
-                                    child: const Text(
-                                      "Get Started",
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
                           ],
                         ),
                       ],
                     ),
                   ),
+                  if (_currentPage == onboardingData.length - 1)
+                    Positioned(
+                      bottom:
+                          40, // Adjust this value to change vertical placement
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const LogIn()),
+                            );
+                          },
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 40,
+                              vertical: 15,
+                            ),
+                            backgroundColor: Colors
+                                .transparent, // Ensure no background color
+                          ),
+                          child: const Text(
+                            "Get Started",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),

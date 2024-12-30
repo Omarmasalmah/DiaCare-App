@@ -43,6 +43,12 @@ class _DiabetesPageState extends State<DiabetesPage> {
     "general": Icons.local_hospital,
   };
 
+  @override
+  void initState() {
+    super.initState();
+    _fetchGlucoseEntries();
+  }
+
   void _addNewValue() {
     var formattedDate;
     var formattedTime;
@@ -205,6 +211,28 @@ class _DiabetesPageState extends State<DiabetesPage> {
         );
       },
     );
+  }
+
+  void _fetchGlucoseEntries() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('glucose_entries')
+          .where('userId', isEqualTo: user.uid)
+          .get();
+
+      setState(() {
+        timelineData = snapshot.docs.map((doc) {
+          return {
+            "value": doc["value"],
+            "date": doc["date"],
+            "time": doc["time"],
+            "status": doc["status"],
+            "icon": statusIcons[doc["status"]],
+          };
+        }).toList();
+      });
+    }
   }
 
   String _monthName(int month) {

@@ -28,7 +28,9 @@ dependencies:
   firebase_storage: ^12.0.0
   firebase_app_check: ^0.3.1+7
   shared_preferences: ^2.3.4
-  cloud_functions: ^4.0.6
+  video_player: ^2.5.0
+  #cloud_functions: ^4.0.6
+  
 
 
 
@@ -46,6 +48,7 @@ flutter:
     - images/
     - fonts/ # Make sure this matches the actual directory where fonts are located
     - assets/images/
+    - videos/
     - assets/images/FruitsandVegetables/
     - assets/images/Soups/
     - assets/images/ColdDrinks/
@@ -63,11 +66,30 @@ flutter:
     - images/backProfile.jpg
     - images/background.jpg
     - images/newdoctor.png
+    - images/seated_spinal.jpg
+    - images/child_pose.jpg
+    - images/seated_forward_bend.jpg
+    - images/bow_pose.jpg
+    - images/cat_cow.jpg
+    - images/legs_up_the_wall.jpg
+    - images/triangle_pose.jpg
+    - images/plank_pose.jpg
     - images/newsport.png
     - images/remind.png
     - images/welcome.png
     - images/NoProfilePic.png
     - images/track.png
+    - videos/Boat-Pose.mp4
+    - videos/Bow-Pose.mp4
+    - videos/Bridge-Pose.mp4
+    - videos/Cat-Cow.mp4
+    - videos/Child-Pose.mp4
+    - videos/Cobra-Pose.mp4
+    - videos/Plank-Pose.mp4
+    - videos/Seated_Forward.mp4
+    - videos/Seated-Spinal-Twist.mp4
+    - videos/Triangle-Pose.mp4
+    - videos/Warrior-Pose.mp4
     - fonts/Roboto-Regular.ttf
     - fonts/Roboto-Bold.ttf
     - fonts/Roboto-Italic.ttf

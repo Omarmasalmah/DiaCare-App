@@ -192,6 +192,7 @@ class _MainInfoPageState extends State<MainInfoPage> {
       TextEditingController controller, String label, IconData icon) {
     return TextField(
       controller: controller,
+      obscureText: label == 'Password' || label == 'Confirm Password',
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon),

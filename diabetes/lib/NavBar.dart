@@ -1,5 +1,7 @@
+import 'package:diabetes/pages/DiabetesYogaListPage.dart';
 import 'package:diabetes/pages/UserListPage.dart';
 import 'package:diabetes/pages/chatPage.dart';
+import 'package:diabetes/pages/custom_chart_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -183,9 +185,28 @@ class _NavBarState extends State<NavBar> {
             // },
           ),
           ListTile(
-            title: const Text('Meal Planning'),
-            leading: const Icon(Icons.launch),
-            onTap: () => null,
+            title: const Text('Exercises'),
+            leading: const Icon(Icons.fitness_center),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        DiabetesYogaListPage()), // Navigate to UserListPage
+              );
+            },
+          ),
+          ListTile(
+            title: const Text('Chart'),
+            leading: const Icon(Icons.pie_chart),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        CustomChartPage()), // Navigate to UserListPage
+              );
+            },
           ),
           ListTile(
             title: const Text('Account Settings'),
