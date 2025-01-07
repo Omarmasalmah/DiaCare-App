@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:diabetes/constants.dart';
 import 'package:diabetes/pages/EmergencyContactsPage.dart';
+import 'package:diabetes/pages/LocaleProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:provider/provider.dart';
 
 class AccountSettingsPage extends StatefulWidget {
   @override
@@ -718,6 +720,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
 
   void _showUpdateLanguageDialog() {
     String selectedLanguage = _userProfile?['prefLanguage'] ?? 'English';
+    final localeProvider =
+        Provider.of<LocalizationService>(context, listen: false);
 
     showDialog(
       context: context,
@@ -749,6 +753,11 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
               onPressed: () async {
                 if (selectedLanguage.isNotEmpty) {
                   await _updateField('prefLanguage', selectedLanguage);
+                  if (selectedLanguage == 'English') {
+                    localeProvider.setLocale(Locale('en', 'US'));
+                  } else if (selectedLanguage == 'Arabic') {
+                    localeProvider.setLocale(Locale('ar', 'AE'));
+                  }
                   Navigator.of(context).pop();
                 }
               },

@@ -1,5 +1,6 @@
 import 'package:diabetes/firebase_options.dart';
 import 'package:diabetes/generated/l10n.dart';
+import 'package:diabetes/pages/LocaleProvider.dart';
 import 'package:diabetes/pages/chatPage.dart';
 import 'package:diabetes/pages/home_screen.dart';
 import 'package:diabetes/pages/OnBoardingScreen.dart';
@@ -10,6 +11,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +28,12 @@ void main() async {
     print("Firebase is not connected. Error: $e");
   }
 
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => LocalizationService(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -35,15 +42,22 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final localeProvider = Provider.of<LocalizationService>(context);
+    print(localeProvider.locale);
     return MaterialApp(
-      locale: const Locale('en'),
-      localizationsDelegates: [
+      //locale: const Locale('ar'),
+      locale: localeProvider.locale,
+      supportedLocales: const [
+        Locale('en'), // English
+        Locale('ar'), // Arabic
+      ],
+      localizationsDelegates: const [
         S.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: S.delegate.supportedLocales,
+      //supportedLocales: S.delegate.supportedLocales,
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(

@@ -8,6 +8,15 @@ class MainCalc extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: Stack(
         children: [
           // Background Image
@@ -28,7 +37,7 @@ class MainCalc extends StatelessWidget {
                 const Padding(
                   padding: EdgeInsets.only(bottom: 40),
                   child: Text(
-                    'Insulin Dose Calculator and Meal Recording ',
+                    'Insulin Dose Calculator \n and Meal Recording ',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,

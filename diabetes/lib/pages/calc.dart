@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() {
   runApp(const MyApp());
@@ -3521,6 +3523,39 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
   double totalCalories = 0.0;
   bool showResults = false; // Initially hide results
 
+  void addToHistory() async {
+    try {
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("User not authenticated.")),
+        );
+        return;
+      }
+
+      // Convert selectedFoods list to a string
+      final String selectedFoodsString = selectedFoods
+          .map((food) => '${food['name']} (Quantity: ${food['quantity']})')
+          .join(', ');
+
+      await FirebaseFirestore.instance.collection('Doses').add({
+        'userId': userId,
+        'insulinValue': totalInsulin,
+        'caloriesValue': totalCalories,
+        'selectedFoods': selectedFoodsString,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Data added to history successfully!")),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error adding data to history: $e")),
+      );
+    }
+  }
+
   void calculateInsulin() {
     final ratio = int.parse(selectedRatio.split(':')[0]);
     totalCarbs = selectedFoods.fold(0.0, (sum, food) {
@@ -3882,6 +3917,18 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
                   child: const Text(
                     'Calculate Totals',
                     style: TextStyle(fontSize: 20),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: addToHistory,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 15),
+                  ),
+                  child: const Text(
+                    'Add to your history',
+                    style: TextStyle(fontSize: 18),
                   ),
                 ),
                 ElevatedButton(

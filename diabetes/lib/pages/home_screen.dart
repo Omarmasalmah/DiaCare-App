@@ -1,8 +1,14 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:diabetes/pages/LocaleProvider.dart';
 import 'package:diabetes/pages/ReadingsEntry.dart';
 import 'package:diabetes/pages/UserListPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:diabetes/NavBar.dart';
 import 'package:diabetes/pages/ChatPage.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
   final double glucoseAverage = 120.0; // Replace with your calculated average
@@ -204,9 +210,50 @@ class MealLogSection extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
-            Column(
-              children: meals.map((meal) => MealLogItem(meal)).toList(),
+            StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('Doses')
+                  .where('userId',
+                      isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+                  .orderBy('timestamp', descending: true)
+                  .limit(3)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return Center(
+                      child: Text("Error loading meals : ${snapshot.error}"));
+                }
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return Center(child: Text("No meals logged yet"));
+                }
+
+                final meals = snapshot.data!.docs.map((doc) {
+                  final data = doc.data() as Map<String, dynamic>;
+                  final meal = data['selectedFoods']?.toString() ?? 'Unknown';
+                  final calories = data['caloriesValue'] != null
+                      ? '${data['caloriesValue']}'
+                      : 'Unknown';
+                  final time = data['timestamp'] != null
+                      ? (data['timestamp'] as Timestamp)
+                          .toDate()
+                          .toLocal()
+                          .toString()
+                      : 'Unknown';
+                  return Text(
+                      'Meal: $meal\nCalories: $calories\nTime: $time\n');
+                }).toList();
+
+                return Column(
+                  children: meals,
+                );
+              },
             ),
+            // Column(
+            //   children: meals.map((meal) => MealLogItem(meal)).toList(),
+            // ),
           ],
         ),
       ),
@@ -214,29 +261,44 @@ class MealLogSection extends StatelessWidget {
   }
 }
 
-class MealLogItem extends StatelessWidget {
-  final Map<String, String> meal;
+// class MealLogItem extends StatelessWidget {
+//   final Map<String, String> meal;
 
-  MealLogItem(this.meal);
+//   MealLogItem(this.meal);
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            meal['name']!,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          Text('Carbs: ${meal['carbs']}'),
-          Text('Time: ${meal['time']}'),
-        ],
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(vertical: 8.0),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Text(
+//             meal['name']!,
+//             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+//           ),
+//           Text('Carbs: ${meal['carbs']}'),
+//           Text('Time: ${meal['time']}'),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
+// class MealLogItem extends StatelessWidget {
+//   final Map<String, dynamic> meal;
+
+//   MealLogItem(this.meal);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return ListTile(
+//       title: Text(meal['selectedFoods']),
+//       subtitle: Text('Calories: ${meal['caloriesValue']}'),
+//       trailing: Text(meal['timestamp'].toDate().toString()),
+//     );
+//   }
+// }
 
 class RemindersSection extends StatelessWidget {
   final List<Map<String, String>> reminders = [
