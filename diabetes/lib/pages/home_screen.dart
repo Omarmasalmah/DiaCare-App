@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:diabetes/generated/l10n.dart';
 import 'package:diabetes/pages/LocaleProvider.dart';
 import 'package:diabetes/pages/ReadingsEntry.dart';
 import 'package:diabetes/pages/UserListPage.dart';
+import 'package:diabetes/pages/custom_chart_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:diabetes/NavBar.dart';
@@ -44,10 +46,20 @@ class HomeScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
+            HealthDashboardWidget(
+              glucoseAverage: glucoseAverage,
+              burnedCalories: burnedCalories,
+              earnedCalories: earnedCalories,
+              stepsWalked: stepsWalked,
+              someOtherValue: someOtherValue,
+            ),
+            SizedBox(height: 20),
             DailyGlucoseCard(),
             SizedBox(height: 20),
             RemindersSection(),
             SizedBox(height: 20),
+            // Add HealthDashboardWidget here
+
             ActivitySummaryCard(
               steps: '8,500',
               exercise: '45 min',
@@ -107,7 +119,7 @@ class DailyGlucoseCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Daily Glucose Level',
+                S.of(context).translate("dailyGlucoseLevel"),
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10),
@@ -150,17 +162,19 @@ class ActivitySummaryCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Activity Summary',
+              S.of(context).translate("activitySummary"),
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildActivityItem(Icons.directions_walk, 'Steps', steps),
-                _buildActivityItem(Icons.fitness_center, 'Exercise', exercise),
-                _buildActivityItem(
-                    Icons.local_fire_department, 'Calories', calories),
+                _buildActivityItem(Icons.directions_walk,
+                    S.of(context).translate("steps"), steps),
+                _buildActivityItem(Icons.fitness_center,
+                    S.of(context).translate("exercise"), exercise),
+                _buildActivityItem(Icons.local_fire_department,
+                    S.of(context).translate("calories"), calories),
               ],
             ),
           ],
@@ -206,7 +220,7 @@ class MealLogSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Recent Meal Log',
+              S.of(context).translate("recentMealLog"),
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
@@ -302,16 +316,16 @@ class MealLogSection extends StatelessWidget {
 
 class RemindersSection extends StatelessWidget {
   final List<Map<String, String>> reminders = [
-    {
-      'title': 'Medication Time',
-      'description': 'Take 2 tablets of Metformin',
-      'time': '8:00 AM'
-    },
-    {
-      'title': 'Doctor Appointment',
-      'description': 'Appointment with Dr. Smith',
-      'time': '2:00 PM'
-    },
+    // {
+    //   'title': 'Medication Time',
+    //   'description': 'Take 2 tablets of Metformin',
+    //   'time': '8:00 AM'
+    // },
+    // {
+    //   'title': 'Doctor Appointment',
+    //   'description': 'Appointment with Dr. Smith',
+    //   'time': '2:00 PM'
+    // },
   ];
 
   @override
@@ -325,7 +339,7 @@ class RemindersSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Reminders',
+              S.of(context).translate("reminders"),
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),

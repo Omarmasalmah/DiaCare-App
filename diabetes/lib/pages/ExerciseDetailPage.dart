@@ -1,4 +1,5 @@
 import 'package:diabetes/pages/DiabetesYogaListPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/services.dart'; // For fullscreen mode
@@ -22,6 +23,10 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
   Duration? _trainingDuration;
   double _caloriesBurned = 0.0;
   double _userWeight = 70.0;
+  bool _isPaused = false;
+
+  final user = FirebaseAuth.instance.currentUser;
+  String? _userId = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   void initState() {
@@ -36,16 +41,39 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
   Future<void> _fetchUserWeight() async {
     try {
       final userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc('user_id') // Replace with the authenticated user's ID
+          .collection('Users')
+          .doc(_userId) // Replace with the authenticated user's ID
           .get();
       if (userDoc.exists && userDoc.data() != null) {
         setState(() {
-          _userWeight = userDoc.data()!['weight'] ?? 70.0;
+          // _userWeight = userDoc.data()!['weight'] ?? 70.0;
+          _userWeight = double.parse(userDoc.data()!['weight'] ?? '70.0');
         });
+        print('User weight: $_userWeight');
       }
     } catch (e) {
       print('Error fetching weight: $e');
+    }
+  }
+
+  Future<void> _saveExerciseToFirebase() async {
+    try {
+      final userId = _userId;
+      final exerciseData = {
+        'userId': userId,
+        'exerciseName': widget.exercise.title,
+        'timeTookInSeconds': _trainingDuration!.inSeconds,
+        'caloriesBurned': _caloriesBurned,
+        'timestamp': DateTime.now(), // Store the exact time when data was saved
+      };
+
+      await FirebaseFirestore.instance
+          .collection('exercises') // Collection name
+          .add(exerciseData); // Add the document
+
+      print('Exercise saved successfully!');
+    } catch (e) {
+      print('Error saving exercise: $e');
     }
   }
 
@@ -92,16 +120,20 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
   void _toggleTraining() {
     setState(() {
       if (_isTraining) {
-        // Stop training
-        _trainingDuration = DateTime.now().difference(_trainingStartTime!);
+        // Handle stopping training, whether paused or not
+        if (!_isPaused) {
+          _trainingDuration = DateTime.now().difference(_trainingStartTime!);
+        }
+
         _isTraining = false;
+        _isPaused = false;
 
         // Calculate burned calories
         final durationInHours = _trainingDuration!.inSeconds / 3600;
         final metValue = widget.exercise.met ?? 1.0; // MET value for yoga
         _caloriesBurned = metValue * _userWeight * durationInHours;
 
-        // Show training duration
+        // Show training summary
         showDialog(
           context: context,
           builder: (context) {
@@ -118,10 +150,28 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
             );
           },
         );
+        _saveExerciseToFirebase();
       } else {
         // Start training
         _trainingStartTime = DateTime.now();
         _isTraining = true;
+        _isPaused = false;
+      }
+    });
+  }
+
+  void _togglePause() {
+    if (!_isTraining) return; // Do nothing if training hasn't started
+
+    setState(() {
+      if (_isPaused) {
+        // Resume training
+        _trainingStartTime = DateTime.now().subtract(_trainingDuration!);
+        _isPaused = false;
+      } else {
+        // Pause training
+        _trainingDuration = DateTime.now().difference(_trainingStartTime!);
+        _isPaused = true;
       }
     });
   }
@@ -477,18 +527,38 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
             ),
           ),
         ),
-        floatingActionButton: FloatingActionButton.extended(
-          backgroundColor: _isTraining ? Colors.red : Colors.green,
-          onPressed: _toggleTraining,
-          icon: Icon(
-            _isTraining ? Icons.stop : Icons.play_arrow,
-            color: Colors.white,
-          ),
-          label: Text(
-            _isTraining ? 'Finish' : 'Start',
-            style: TextStyle(color: Colors.white),
-          ),
-          tooltip: _isTraining ? 'Finish Training' : 'Start Training',
+        floatingActionButton: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            if (_isTraining)
+              FloatingActionButton.extended(
+                backgroundColor: _isPaused ? Colors.green : Colors.orange,
+                onPressed: _togglePause,
+                icon: Icon(
+                  _isPaused ? Icons.play_arrow : Icons.pause,
+                  color: Colors.white,
+                ),
+                label: Text(
+                  _isPaused ? 'Resume' : 'Pause',
+                  style: TextStyle(color: Colors.white),
+                ),
+                tooltip: _isPaused ? 'Resume Training' : 'Pause Training',
+              ),
+            const SizedBox(height: 16), // Add spacing between buttons
+            FloatingActionButton.extended(
+              backgroundColor: _isTraining ? Colors.red : Colors.green,
+              onPressed: _toggleTraining,
+              icon: Icon(
+                _isTraining ? Icons.stop : Icons.play_arrow,
+                color: Colors.white,
+              ),
+              label: Text(
+                _isTraining ? 'Finish' : 'Start',
+                style: TextStyle(color: Colors.white),
+              ),
+              tooltip: _isTraining ? 'Finish Training' : 'Start Training',
+            ),
+          ],
         ),
       ),
     );

@@ -1,4 +1,6 @@
+import 'package:diabetes/generated/l10n.dart';
 import 'package:diabetes/pages/DiabetesYogaListPage.dart';
+import 'package:diabetes/pages/LocaleProvider.dart';
 import 'package:diabetes/pages/UserListPage.dart';
 import 'package:diabetes/pages/chatPage.dart';
 import 'package:diabetes/pages/custom_chart_page.dart';
@@ -10,6 +12,7 @@ import 'package:diabetes/pages/home_screen.dart';
 import 'package:diabetes/pages/login.dart';
 import 'package:diabetes/pages/AccountSettings.dart';
 import 'package:diabetes/pages/MainCalc.dart';
+import 'package:provider/provider.dart';
 
 class NavBar extends StatefulWidget {
   const NavBar({super.key});
@@ -48,12 +51,15 @@ class _NavBarState extends State<NavBar> {
   }
 
   void _signOut(BuildContext context) async {
+    final localeProvider =
+        Provider.of<LocalizationService>(context, listen: false);
     await FirebaseAuth.instance.signOut();
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => LogIn()),
       (Route<dynamic> route) => false,
     );
+    localeProvider.setLocale(Locale('en', 'US'));
   }
 
   void _showSignOutDialog(BuildContext context) {
@@ -61,8 +67,8 @@ class _NavBarState extends State<NavBar> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Sign Out"),
-          content: const Text("Are you sure you want to sign out?"),
+          title: Text(S.of(context).translate('logout')),
+          content: Text(S.of(context).translate('sureToLogout')),
           actions: <Widget>[
             TextButton(
               child: const Text("No"),
@@ -122,7 +128,7 @@ class _NavBarState extends State<NavBar> {
             ),
           ),
           ListTile(
-            title: const Text('Home'),
+            title: Text(S.of(context).translate('home')),
             leading: const Icon(Icons.home),
             onTap: () {
               Navigator.push(
@@ -132,7 +138,7 @@ class _NavBarState extends State<NavBar> {
             },
           ),
           ListTile(
-            title: const Text('FAQ'),
+            title: Text(S.of(context).translate('faq')),
             leading: const Icon(Icons.question_answer),
             onTap: () {
               Navigator.push(
@@ -143,7 +149,7 @@ class _NavBarState extends State<NavBar> {
             },
           ),
           ListTile(
-            title: const Text('Insulin & Calories Calculator'),
+            title: Text(S.of(context).translate('insulinCalc')),
             leading: const Icon(Icons.calculate),
             onTap: () {
               Navigator.push(
@@ -155,7 +161,7 @@ class _NavBarState extends State<NavBar> {
             },
           ),
           ListTile(
-            title: const Text('Chat'),
+            title: Text(S.of(context).translate('chat')),
             leading: const Icon(Icons.chat),
             onTap: () {
               Navigator.push(
@@ -185,7 +191,7 @@ class _NavBarState extends State<NavBar> {
             // },
           ),
           ListTile(
-            title: const Text('Exercises'),
+            title: Text(S.of(context).translate('exercises')),
             leading: const Icon(Icons.fitness_center),
             onTap: () {
               Navigator.push(
@@ -197,19 +203,19 @@ class _NavBarState extends State<NavBar> {
             },
           ),
           ListTile(
-            title: const Text('Chart'),
+            title: Text(S.of(context).translate('chart')),
             leading: const Icon(Icons.pie_chart),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        CustomChartPage()), // Navigate to UserListPage
-              );
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //       builder: (context) =>
+              //           HealthDashboardWidget()), // Navigate to UserListPage
+              // );
             },
           ),
           ListTile(
-            title: const Text('Account Settings'),
+            title: Text(S.of(context).translate('accountSettings')),
             leading: const Icon(Icons.settings),
             onTap: () {
               Navigator.push(
@@ -221,7 +227,7 @@ class _NavBarState extends State<NavBar> {
             },
           ),
           ListTile(
-            title: const Text('Log Out'),
+            title: Text(S.of(context).translate('logout')),
             leading: const Icon(Icons.logout),
             onTap: () => _showSignOutDialog(context),
           ),

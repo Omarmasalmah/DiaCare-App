@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:diabetes/constants.dart';
+import 'package:diabetes/generated/l10n.dart';
 import 'package:diabetes/pages/EmergencyContactsPage.dart';
 import 'package:diabetes/pages/LocaleProvider.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:numberpicker/numberpicker.dart';
 import 'package:provider/provider.dart';
 
 class AccountSettingsPage extends StatefulWidget {
@@ -275,6 +277,47 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
     );
   }
 
+  void _showWeightPickerDialog() {
+    int selectedWeight = weight.toInt();
+
+    showDialog<int>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Select Weight'),
+          content: NumberPicker(
+            value: selectedWeight,
+            minValue: 0,
+            maxValue: 200,
+            onChanged: (value) {
+              setState(() {
+                selectedWeight = value;
+              });
+            },
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                setState(() {
+                  weight = selectedWeight.toDouble();
+                  _updateField('weight', weight.toString());
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<bool> _authenticateWithFingerprint() async {
     final LocalAuthentication auth = LocalAuthentication();
 
@@ -337,7 +380,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("Account Settings"),
+        title: Text(S.of(context).translate('accountSettings')),
         backgroundColor: Colors.teal,
       ),
       body: SingleChildScrollView(
@@ -397,33 +440,33 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                 onTap: _updateProfileImage,
               ),
               ListTile(
-                  title: Text("Name"),
+                  title: Text(S.of(context).translate('name')),
                   subtitle: Text(_userProfile?['name'] ?? 'Loading...'),
                   trailing: Icon(Icons.edit),
                   onTap: () => _showUpdateFieldDialog(
                       "name", _userProfile?['name'] ?? '')),
               ListTile(
-                title: Text("Email"),
+                title: Text(S.of(context).translate('email')),
                 subtitle: Text(_userProfile?['email'] ?? 'Loading...'),
                 // trailing: Icon(Icons.edit),
                 onTap: () {},
               ),
               ListTile(
-                title: Text("Phone Number"),
+                title: Text(S.of(context).translate('phoneNumber')),
                 subtitle: Text(_userProfile?['phoneNumber'] ?? 'Loading...'),
                 trailing: Icon(Icons.edit),
                 onTap: () => _showUpdateFieldDialog(
                     "phoneNumber", _userProfile?['phoneNumber'] ?? ''),
               ),
               ListTile(
-                title: Text("Date of Birth"),
+                title: Text(S.of(context).translate('dob')),
                 subtitle: Text(_userProfile?['birthdate'] ?? 'Loading...'),
                 trailing: Icon(Icons.edit),
                 onTap: () => _showUpdateFieldDialog(
                     "birthdate", _userProfile?['birthdate'] ?? ''),
               ),
               ListTile(
-                title: Text("Language Preferences"),
+                title: Text(S.of(context).translate('languagePreferences')),
                 subtitle: Text(_userProfile?['prefLanguage'] ?? 'Loading...'),
                 trailing: Icon(Icons.edit),
                 onTap: _showUpdateLanguageDialog,
@@ -467,8 +510,14 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
             },
           ),
           ListTile(
-            title: Text("Weight & Height"),
-            subtitle: Text("$weight kg, $height cm"),
+            title: Text("Weight"),
+            subtitle: Text("$weight kg"),
+            trailing: Icon(Icons.edit),
+            onTap: () => _showWeightPickerDialog(),
+          ),
+          ListTile(
+            title: Text("Height"),
+            subtitle: Text("$height cm"),
             trailing: Icon(Icons.edit),
             onTap: () {
               // Handle weight and height update
@@ -723,6 +772,13 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
     final localeProvider =
         Provider.of<LocalizationService>(context, listen: false);
 
+    User? currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser == null) {
+      print("No user is logged in.");
+      return;
+    }
+
     showDialog(
       context: context,
       builder: (context) {
@@ -754,8 +810,22 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                 if (selectedLanguage.isNotEmpty) {
                   await _updateField('prefLanguage', selectedLanguage);
                   if (selectedLanguage == 'English') {
+                    await FirebaseFirestore.instance
+                        .collection(
+                            'Users') // Adjust the collection name if necessary
+                        .doc(currentUser?.uid)
+                        .update({
+                      'prefLanguage': 'English',
+                    });
                     localeProvider.setLocale(Locale('en', 'US'));
                   } else if (selectedLanguage == 'Arabic') {
+                    await FirebaseFirestore.instance
+                        .collection(
+                            'Users') // Adjust the collection name if necessary
+                        .doc(currentUser?.uid)
+                        .update({
+                      'prefLanguage': 'Arabic',
+                    });
                     localeProvider.setLocale(Locale('ar', 'AE'));
                   }
                   Navigator.of(context).pop();

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:diabetes/firebase_options.dart';
 import 'package:diabetes/generated/l10n.dart';
 import 'package:diabetes/pages/LocaleProvider.dart';
@@ -12,6 +14,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+import 'package:diabetes/NotificationService.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,12 +35,72 @@ void main() async {
     print("Firebase is not connected. Error: $e");
   }
 
+  tz.initializeTimeZones();
+  await initializeNotifications();
+
+  await requestNotificationPermission();
+
+  final notificationService = NotificationService();
+  notificationService.scheduleDailyReminders();
+
+// Schedule notifications every 10 seconds automatically
+  print("Current time1: ${DateTime.now()}");
+
+  Timer.periodic(const Duration(seconds: 5), (timer) {
+    print("Current time2: ${DateTime.now()}");
+    final now = DateTime.now();
+    /*   NotificationService.scheduleNotification(
+      id: timer.tick, // Unique ID for each notification
+      title: 'Automatic Reminder',
+      body: 'This is a recurring notification sent every 10 seconds.',
+      scheduledTime: now.add(const Duration(seconds: 10)),
+    );*/
+    print("Current time3: ${DateTime.now()}");
+
+    ///////////////////////////////////////////////////
+    notificationService.scheduleDailyReminders();
+
+    /* NotificationService.showDailyReminder(
+    'Time to take your medication!',
+    1,
+    DateTime(now.year, now.month, now.day, 18, 15), // 8:00 PM
+
+  );*/
+  });
+
   runApp(
     ChangeNotifierProvider(
       create: (_) => LocalizationService(),
       child: MyApp(),
     ),
   );
+}
+
+Future<void> initializeNotifications() async {
+  const AndroidInitializationSettings androidInitializationSettings =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  const InitializationSettings initializationSettings = InitializationSettings(
+    android: androidInitializationSettings,
+  );
+
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+    onDidReceiveNotificationResponse: (NotificationResponse response) {
+      print("Notification Clicked: ${response.payload}");
+    },
+  );
+}
+
+Future<void> requestNotificationPermission() async {
+  final NotificationAppLaunchDetails? details =
+      await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+
+  final AndroidFlutterLocalNotificationsPlugin? androidPlugin =
+      flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>();
+
+  await androidPlugin?.requestPermission();
 }
 
 class MyApp extends StatelessWidget {

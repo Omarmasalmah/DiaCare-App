@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diabetes/components/my_button.dart';
 import 'package:diabetes/components/my_textfield.dart';
 import 'package:diabetes/components/square_tile.dart';
+import 'package:diabetes/pages/LocaleProvider.dart';
 import 'package:diabetes/pages/PhoneNumberPage.dart';
 import 'package:diabetes/pages/home_screen.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:diabetes/pages/ForgetPassPage.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LogIn extends StatefulWidget {
@@ -229,6 +231,47 @@ class _LogInState extends State<LogIn> {
 
     // Call _signUserIn with the entered email and password
     _signUserIn(emailController.text, passwordController.text);
+
+    final localeProvider =
+        Provider.of<LocalizationService>(context, listen: false);
+
+    try {
+      // Get the current user
+      User? currentUser = FirebaseAuth.instance.currentUser;
+
+      if (currentUser == null) {
+        print("No user is currently logged in.");
+        return;
+      }
+
+      // Access the Firestore document for the user
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('Users') // Adjust the collection name if necessary
+          .doc(currentUser.uid)
+          .get();
+
+      if (!userDoc.exists) {
+        print("User document does not exist.");
+        return;
+      }
+
+      // Retrieve the 'prefLanguage' field
+      String? prefLanguage = userDoc.get('prefLanguage');
+
+      if (prefLanguage == null) {
+        print("Preferred language is not set.");
+      } else if (prefLanguage == 'Arabic') {
+        localeProvider.setLocale(const Locale('ar'));
+        //print("User's preferred language is Arabic.");
+      } else if (prefLanguage == 'English') {
+        localeProvider.setLocale(const Locale('en'));
+        //print("User's preferred language is English.");
+      } else {
+        print("User's preferred language is $prefLanguage.");
+      }
+    } catch (e) {
+      print("An error occurred: $e");
+    }
   }
 
   // Future<void> signInWithGoogle() async {

@@ -18,7 +18,7 @@ dependencies:
   fluttertoast: ^8.2.1
   cloud_firestore: ^5.5.0 # Use the latest version
   flutter_localizations:
-        sdk: flutter
+    sdk: flutter
   fl_chart: ^0.69.1
   numberpicker: ^2.1.0
   google_sign_in: ^6.2.2
@@ -31,6 +31,8 @@ dependencies:
   video_player: ^2.5.0
   provider: ^6.1.2
   #cloud_functions: ^4.0.6
+  flutter_local_notifications: ^14.0.4
+
   
 
 
@@ -45,6 +47,10 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  generate: true
+  
+  
+  
 
   assets:
     - images/
