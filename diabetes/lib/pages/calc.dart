@@ -3528,7 +3528,7 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
       final userId = FirebaseAuth.instance.currentUser?.uid;
       if (userId == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("User not authenticated.")),
+          const SnackBar(content: Text("User not authenticated.")),
         );
         return;
       }
@@ -3547,7 +3547,7 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Data added to history successfully!")),
+        const SnackBar(content: Text("Data added to history successfully!")),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -3624,75 +3624,108 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
 
             return AlertDialog(
               title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(category),
+                  Text(
+                    category,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
                   TextField(
                     onChanged: (value) {
                       setDialogState(() {
                         searchQuery = value;
                       });
                     },
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Search Items',
-                      border: OutlineInputBorder(),
+                      labelStyle:
+                          const TextStyle(fontSize: 14, color: Colors.teal),
+                      filled: true,
+                      fillColor: Colors.white,
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide:
+                            const BorderSide(color: Colors.teal, width: 2),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(
+                            color: Colors.blueAccent, width: 2),
+                      ),
+                      prefixIcon: const Icon(Icons.search, color: Colors.teal),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
                     ),
                   ),
                 ],
               ),
               content: SizedBox(
-                height: 300,
-                width: 300,
+                height: 350,
+                width: 350,
                 child: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    mainAxisSpacing: 10,
-                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 15,
+                    crossAxisSpacing: 15,
                     childAspectRatio: 3 / 4,
                   ),
                   itemCount: filteredItems.length,
                   itemBuilder: (context, index) {
                     final food = filteredItems[index];
                     return Card(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment
-                            .spaceEvenly, // Distribute space evenly
-                        children: [
-                          Expanded(
-                            flex: 2, // Allocate space for the image
-                            child: Image.asset(
-                              food['image'],
-                              width: 80,
-                              height: 80,
-                              fit: BoxFit.cover,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      elevation: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.asset(
+                                  food['image'],
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 5),
-                          Expanded(
-                            child: Text(
+                            const SizedBox(height: 5),
+                            Text(
                               food['name'],
                               textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              'Size: ${food['size'] ?? "N/A"}',
                               style: const TextStyle(fontSize: 12),
                             ),
-                          ),
-                          Text(
-                            'Size: ${food['size'] ?? "N/A"}', // Add size info
-                            style: const TextStyle(fontSize: 10),
-                          ),
-                          Text(
-                            'Carbs: ${food['carbs']}g', // Add carbs info
-                            style: const TextStyle(fontSize: 10),
-                          ),
-                          Text(
-                            'Calories: ${food['calories'] ?? "N/A"}', // Add calories info
-                            style: const TextStyle(fontSize: 10),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.add_circle),
-                            onPressed: () {
-                              showFoodSelectionDialog(food);
-                            },
-                          ),
-                        ],
+                            Text(
+                              'Carbs: ${food['carbs']}g',
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            Text(
+                              'Calories: ${food['calories'] ?? "N/A"}',
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.add_circle,
+                                  color: Colors.teal),
+                              onPressed: () {
+                                showFoodSelectionDialog(food);
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },
@@ -3701,7 +3734,11 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Close'),
+                  child: const Text(
+                    'Close',
+                    style: TextStyle(
+                        color: Colors.teal, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ],
             );
@@ -3715,18 +3752,31 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: const Text('Insulin Calculator',
+            style: TextStyle(color: Colors.white, fontSize: 24)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back,
+              color: Colors.white), // White back button
+          onPressed: () {
+            Navigator.of(context).pop(); // Handle back navigation
+          },
+        ),
         centerTitle: true,
-        title: const Text(
-          'Insulin Calculator',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 28,
+        elevation: 4,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.teal, Color.fromARGB(255, 41, 175, 45)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
           ),
         ),
         actions: [
           IconButton(
             onPressed: clearSelectedItems,
-            icon: const Icon(Icons.clear),
+            icon: const Icon(Icons.clear,
+                color: Color.fromARGB(255, 251, 2, 2)), // White clear icon
             tooltip: 'Clear All Items',
           ),
         ],
@@ -3734,7 +3784,10 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.green, Colors.white],
+            colors: [
+              Color.fromARGB(255, 207, 226, 208),
+              Color.fromARGB(255, 145, 224, 149)
+            ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -3751,28 +3804,12 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
                 ),
                 DropdownButton<String>(
                   value: selectedRatio,
-                  items: [
-                    '6:1',
-                    '7:1',
-                    '8:1',
-                    '9:1',
-                    '10:1',
-                    '11:1',
-                    '12:1',
-                    '13:1',
-                    '14:1',
-                    '15:1',
-                    '16:1',
-                    '17:1',
-                    '18:1',
-                    '19:1',
-                    '20:1'
-                  ]
-                      .map((ratio) => DropdownMenuItem(
-                            value: ratio,
-                            child: Text(ratio),
-                          ))
-                      .toList(),
+                  items: [for (int i = 6; i <= 20; i++) '${i}:1'].map((ratio) {
+                    return DropdownMenuItem(
+                      value: ratio,
+                      child: Text(ratio),
+                    );
+                  }).toList(),
                   onChanged: (value) {
                     setState(() {
                       selectedRatio = value!;
@@ -3798,19 +3835,38 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
                 children: [
                   // Search Bar
                   Padding(
-                    padding: const EdgeInsets.all(10.0),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: TextField(
                       onChanged:
                           updateSearchQuery, // Call the search function on input change
                       decoration: InputDecoration(
                         labelText: 'Search Categories',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                        labelStyle:
+                            const TextStyle(color: Colors.teal, fontSize: 16),
+                        filled: true,
+                        fillColor: Colors.white,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide:
+                              const BorderSide(color: Colors.teal, width: 2),
                         ),
-                        prefixIcon: const Icon(Icons.search),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: const BorderSide(
+                              color: Colors.blueAccent, width: 2),
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.search,
+                          color: Colors.teal,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
                       ),
+                      style: const TextStyle(fontSize: 16),
                     ),
                   ),
+
                   Expanded(
                     child: SingleChildScrollView(
                       child: Wrap(
@@ -3825,6 +3881,8 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(15),
                                 ),
+                                backgroundColor: Colors.white,
+                                shadowColor: Colors.teal,
                               ),
                               onPressed: () =>
                                   showCategoryDialog(category['label']!),
@@ -3905,45 +3963,72 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
               ),
             ),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: calculateInsulin,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 15),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: calculateInsulin,
+                    icon: const Icon(Icons.calculate,
+                        color: Colors.white, size: 18),
+                    label: const Text(
+                      'Calculate',
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
+                      backgroundColor: Colors.teal,
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      minimumSize: const Size(120, 40), // Set button size
+                    ),
                   ),
-                  child: const Text(
-                    'Calculate Totals',
-                    style: TextStyle(fontSize: 20),
+                  const SizedBox(width: 10), // Spacer between buttons
+                  ElevatedButton.icon(
+                    onPressed: addToHistory,
+                    icon: const Icon(Icons.history,
+                        color: Colors.white, size: 18),
+                    label: const Text(
+                      'History',
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
+                      backgroundColor: Colors.blue,
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      minimumSize: const Size(120, 40), // Set button size
+                    ),
                   ),
-                ),
-                ElevatedButton(
-                  onPressed: addToHistory,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 15),
+                  const SizedBox(width: 10), // Spacer between buttons
+                  ElevatedButton.icon(
+                    onPressed: clearSelectedItems,
+                    icon:
+                        const Icon(Icons.clear, color: Colors.white, size: 18),
+                    label: const Text(
+                      'Clear',
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
+                      backgroundColor: Colors.red,
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      minimumSize: const Size(120, 40), // Set button size
+                    ),
                   ),
-                  child: const Text(
-                    'Add to your history',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: clearSelectedItems,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 15),
-                  ),
-                  child: const Text(
-                    'Clear',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
 
 // Results Section

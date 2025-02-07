@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diabetes/components/my_button.dart';
 import 'package:diabetes/components/my_textfield.dart';
 import 'package:diabetes/components/square_tile.dart';
+import 'package:diabetes/pages/DoctorHomePage.dart';
 import 'package:diabetes/pages/LocaleProvider.dart';
 import 'package:diabetes/pages/PhoneNumberPage.dart';
 import 'package:diabetes/pages/home_screen.dart';
@@ -132,6 +133,86 @@ class _LogInState extends State<LogIn> {
     }
   }
 
+  // Future<void> _signUserIn(String email, String password) async {
+  //   // Loading indicator
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) {
+  //       return const Center(child: CircularProgressIndicator());
+  //     },
+  //   );
+
+  //   // Sign in user
+  //   try {
+  //     final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+  //       email: email.trim(),
+  //       password: password.trim(),
+  //     );
+
+  //     // Close loading indicator
+  //     Navigator.pop(context);
+
+  //     if (credential.user?.emailVerified ?? false) {
+  //       // Store the email and password if remember me is checked
+  //       if (rememberMe) {
+  //         final prefs = await SharedPreferences.getInstance();
+  //         prefs.setString('email', email);
+  //         prefs.setString('password', password);
+  //         prefs.setBool('rememberMe', rememberMe);
+  //         print('Credentials stored in SharedPreferences');
+  //       }
+
+  //       // Email is verified, navigate to the home screen
+  //       if (mounted) {
+  //         // Navigator.pushReplacement(
+  //         //   context,
+  //         //   MaterialPageRoute(builder: (context) => HomeScreen()),
+  //         // );
+  //         if (role == 'user') {
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(builder: (context) => HomeScreen()),
+  //     );
+  //   } else if (role == 'doctor') {
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(builder: (context) => DoctorHomePage()),
+  //     );
+  //       }
+  //     } else {
+  //       // Email is not verified, show a message to the user
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //             content: Text("Please verify your email before signing in.")),
+  //       );
+  //     }
+  //   } on FirebaseAuthException catch (e) {
+  //     // Close loading indicator
+  //     Navigator.pop(context);
+
+  //     // Handle different error types
+  //     if (e.code == 'user-not-found') {
+  //       if (mounted) {
+  //         setState(() {
+  //           emailError = 'No user found for that email.';
+  //         });
+  //       }
+  //     } else if (e.code == 'wrong-password') {
+  //       if (mounted) {
+  //         setState(() {
+  //           passwordError = 'Incorrect password.';
+  //         });
+  //       }
+  //     } else {
+  //       if (mounted) {
+  //         setState(() {
+  //           emailError = 'An error occurred. Please try again.';
+  //         });
+  //       }
+  //     }
+  //   }
+  // }
+
   Future<void> _signUserIn(String email, String password) async {
     // Loading indicator
     showDialog(
@@ -161,11 +242,38 @@ class _LogInState extends State<LogIn> {
           print('Credentials stored in SharedPreferences');
         }
 
-        // Email is verified, navigate to the home screen
-        if (mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => HomeScreen()),
+        // Fetch user role from Firestore
+        final userDoc = await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(credential.user!.uid)
+            .get();
+
+        if (userDoc.exists) {
+          final role = userDoc.data()?['role'];
+
+          // Email is verified, navigate to the appropriate screen based on role
+          if (mounted) {
+            if (role == 'patient') {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => HomeScreen()),
+              );
+            } else if (role == 'doctor') {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => DoctorHomePage()),
+              );
+            } else {
+              // Handle other roles or show an error
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Unknown role: $role')),
+              );
+            }
+          }
+        } else {
+          // User document does not exist
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('User document does not exist')),
           );
         }
       } else {

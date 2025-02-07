@@ -10,6 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  http: ^1.2.2  
   cupertino_icons: ^1.0.8
   flutter_native_splash: ^2.4.1
   firebase_core: ^3.6.0
@@ -25,13 +26,17 @@ dependencies:
   flutter_facebook_auth: ^7.1.1
   local_auth: ^2.1.7
   image_picker: ^0.8.7+4
-  firebase_storage: ^12.0.0
+  # firebase_storage: ^12.0.0
   firebase_app_check: ^0.3.1+7
   shared_preferences: ^2.3.4
   video_player: ^2.5.0
   provider: ^6.1.2
   #cloud_functions: ^4.0.6
   flutter_local_notifications: ^14.0.4
+  file_picker: ^8.1.7
+  url_launcher: ^6.3.1
+  font_awesome_flutter: ^10.8.0
+  pedometer: ^4.0.2
 
   
 

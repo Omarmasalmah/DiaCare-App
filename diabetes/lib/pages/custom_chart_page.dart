@@ -1,3 +1,4 @@
+import 'package:diabetes/pages/ReadingsEntry.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
@@ -22,55 +23,87 @@ class HealthDashboardWidget extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Central Chart
-        SizedBox(
-          width: 200,
-          height: 200,
-          child: Stack(
-            children: [
-              PieChart(
-                PieChartData(
-                  sections: [
-                    PieChartSectionData(
-                      value: glucoseAverage,
-                      color: Colors.blue,
-                      radius: 50,
-                      title: '${glucoseAverage.toStringAsFixed(1)} mg/dL',
-                      titleStyle: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        color: Colors.white,
-                      ),
-                    ),
-                    PieChartSectionData(
-                      value: 300 - glucoseAverage,
-                      color: Colors.grey[200],
-                      radius: 50,
-                      title: '',
-                    ),
-                  ],
-                  centerSpaceRadius: 40,
-                  startDegreeOffset: -90,
-                ),
-              ),
-              const Center(
-                child: Text(
-                  "Average\nGlucose",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 50),
-
+        const SizedBox(height: 10),
         // Surrounding Metrics
         Wrap(
           alignment: WrapAlignment.center,
           spacing: 50,
-          runSpacing: 30,
+          runSpacing: 10,
           children: [
+            //  Glucose Average
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          DiabetesPage()), // Navigate to DiabetesPage
+                );
+              },
+              child: Container(
+                width: 200,
+                height: 140,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color.fromARGB(
+                      255, 226, 244, 222), // Background color
+                ),
+                child: Stack(
+                  alignment: Alignment.topCenter,
+                  children: [
+                    // Outer border
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: const Color.fromARGB(
+                            255, 41, 187, 25), // Circle border color
+                      ),
+                    ),
+                    // Inner circle
+                    Container(
+                      width: 80,
+                      height: 100,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color.fromARGB(255, 255, 255,
+                            255), // Inner circle background color
+                      ),
+                      alignment: Alignment.center,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "${glucoseAverage.toStringAsFixed(1)}\nmg/dL",
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black, // Text color
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Title at the bottom
+                    Positioned(
+                      bottom: 10,
+                      child: const Text(
+                        "Glucose Average",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color:
+                              Color.fromARGB(255, 0, 0, 0), // Title text color
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
             _buildMetricCircle(
               title: "Burned",
               value: "${burnedCalories.toStringAsFixed(1)} kcal",

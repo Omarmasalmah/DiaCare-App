@@ -1,3 +1,5 @@
+import 'package:diabetes/pages/ReadingsEntry.dart';
+import 'package:diabetes/pages/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'ExerciseDetailPage.dart';
 
@@ -217,15 +219,25 @@ final List<YogaExercise> exercises = [
 ];
 
 class DiabetesYogaListPage extends StatelessWidget {
+  const DiabetesYogaListPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "Yoga Exercises",
-          style: TextStyle(color: Colors.white),
+        title: const Text("Yoga Exercises",
+            style: TextStyle(color: Colors.white, fontSize: 24)),
+        centerTitle: true,
+        elevation: 4,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.teal, Color.fromARGB(255, 41, 175, 45)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
         ),
-        backgroundColor: const Color.fromARGB(255, 2, 85, 152),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
@@ -251,7 +263,7 @@ class DiabetesYogaListPage extends StatelessWidget {
                 );
               },
               child: Card(
-                margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -273,7 +285,7 @@ class DiabetesYogaListPage extends StatelessWidget {
                       ),
                     ),
                     ClipRRect(
-                      borderRadius: BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                         topRight: Radius.circular(12),
                         bottomRight: Radius.circular(12),
                       ),
@@ -289,6 +301,94 @@ class DiabetesYogaListPage extends StatelessWidget {
               ),
             );
           },
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Handle SOS button action
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text("SOS"),
+                content: const Text("SOS button pressed!"),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text("OK"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        },
+        backgroundColor: Colors.red,
+        child: const Icon(Icons.warning, size: 30),
+        shape: const CircleBorder(),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        notchMargin: 9.0,
+        shape: const CircularNotchedRectangle(),
+        color: const Color.fromARGB(255, 0, 0, 0),
+        child: SizedBox(
+          height: 60,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.home, color: Colors.white, size: 34),
+                onPressed: () {
+                  // Navigate to the home screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            HomeScreen()), // Replace HomeScreen with your actual home screen widget
+                  );
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.feed, color: Colors.white, size: 34),
+                onPressed: () {
+                  // Navigate to the readings entry screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            HomeScreen()), // Replace ReadingsEntry with your actual readings entry screen widget
+                  );
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.add, color: Colors.white, size: 34),
+                onPressed: () {
+                  // Navigate to the home screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            DiabetesPage()), // Replace HomeScreen with your actual home screen widget
+                  );
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.fitness_center,
+                    color: Colors.white, size: 30),
+                onPressed: () {
+                  // Navigate to the custom chart screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            const DiabetesYogaListPage()), // Replace CustomChartPage with your actual custom chart screen widget
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

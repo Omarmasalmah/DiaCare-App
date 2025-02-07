@@ -1,12 +1,17 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:diabetes/chatBuble.dart';
 import 'package:diabetes/constants.dart';
 import 'package:diabetes/models/message.dart';
+import 'package:file_picker/file_picker.dart';
+// import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ChatPage extends StatefulWidget {
   static String id = 'ChatPage';
+
+  const ChatPage({super.key});
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -20,6 +25,9 @@ class _ChatPageState extends State<ChatPage> {
 
   String? recipientEmail;
   String recipientName = 'No Name';
+  String recipientProfileImageUrl = '';
+
+  String? conversationId;
 
   final currentUser = FirebaseAuth.instance.currentUser?.email;
 
@@ -28,8 +36,6 @@ class _ChatPageState extends State<ChatPage> {
     users.sort(); // Alphabetical order
     return users.join('_');
   }
-
-  String? conversationId;
 
   @override
   void initState() {
@@ -41,7 +47,7 @@ class _ChatPageState extends State<ChatPage> {
       if (args == null || args['email'] == null) {
         // Handle missing arguments gracefully
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Recipient email is missing.')),
+          const SnackBar(content: Text('Recipient email is missing.')),
         );
         Navigator.pop(context); // Navigate back to prevent further issues
         return;
@@ -52,16 +58,10 @@ class _ChatPageState extends State<ChatPage> {
         setState(() {
           recipientEmail = args['email'];
           recipientName = args['name'] ?? 'No Name';
+          recipientProfileImageUrl =
+              args['profileImage'] ?? 'images/NoProfilePic.png';
           conversationId = generateConversationId(currentUser, recipientEmail!);
-          print('Conversation ID: $conversationId'); // Debugging log
-
-          // Debugging logs
-          print('Current User: $currentUser');
-          print('Recipient Email: $recipientEmail');
-          print('Conversation ID: $conversationId');
         });
-      } else {
-        print('Current user is null');
       }
     });
   }
@@ -73,24 +73,119 @@ class _ChatPageState extends State<ChatPage> {
     super.dispose();
   }
 
+  // Future<void> _pickImage() async {
+  //   final ImagePicker picker = ImagePicker();
+  //   final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+  //   if (image != null) {
+  //     File imageFile = File(image.path);
+  //     _uploadFile(imageFile, 'image');
+  //   }
+  // }
+
+  // Future<void> _pickFile() async {
+  //   FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+  //   if (result != null) {
+  //     File file = File(result.files.single.path!);
+  //     _uploadFile(file, 'file');
+  //   }
+  // }
+
+  // Future<void> _uploadFile(File file, String type) async {
+  //   try {
+  //     String fileName =
+  //         '${DateTime.now().millisecondsSinceEpoch}_${file.path.split('/').last}';
+  //     Reference ref = FirebaseStorage.instance.ref().child('uploads/$fileName');
+
+  //     await ref.putFile(file);
+  //     String downloadUrl = await ref.getDownloadURL();
+
+  //     await messages.add({
+  //       'message': downloadUrl,
+  //       'type': type, // Indicate the type of message
+  //       'createdAt': DateTime.now(),
+  //       'senderId': currentUser,
+  //       'receiverId': recipientEmail,
+  //       'conversationId': conversationId,
+  //     });
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Failed to upload file: $e')),
+  //     );
+  //   }
+  // }
+
+  void _sendMessage(String data) async {
+    if (data.trim().isEmpty) return;
+
+    try {
+      await messages.add({
+        'message': data,
+        'type': 'text', // Indicate that this is a text message
+        'createdAt': DateTime.now(),
+        'senderId': currentUser,
+        'receiverId': recipientEmail,
+        'conversationId': conversationId,
+      });
+      controller.clear();
+      _controller.animateTo(
+        0,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeIn,
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to send message: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color.fromARGB(255, 245, 245, 245),
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: kPrimaryColor,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: Text(
-          'Chat with $recipientName',
-          style: TextStyle(color: Colors.white),
+        title: Row(
+          children: [
+            CircleAvatar(
+              radius: 20,
+              backgroundColor: Colors.grey[300], // Placeholder background color
+              backgroundImage: (recipientProfileImageUrl != null &&
+                      recipientProfileImageUrl.isNotEmpty)
+                  ? NetworkImage(recipientProfileImageUrl)
+                  : const AssetImage('images/NoProfilePic.png')
+                      as ImageProvider,
+            ),
+            const SizedBox(width: 12),
+            Text(
+              recipientName,
+              style: const TextStyle(color: Colors.white, fontSize: 18),
+            ),
+          ],
         ),
-        centerTitle: true,
+        centerTitle: false,
+        elevation: 4,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color.fromARGB(255, 58, 140, 85),
+                Color.fromARGB(255, 25, 106, 48)
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: Column(
         children: [
@@ -104,7 +199,7 @@ class _ChatPageState extends State<ChatPage> {
                   : null, // Prevent building without a conversation ID
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
 
                 if (snapshot.hasError) {
@@ -128,49 +223,107 @@ class _ChatPageState extends State<ChatPage> {
                     },
                   );
                 } else {
-                  return Center(child: Text('No messages yet.'));
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.chat_bubble_outline,
+                          size: 80,
+                          color: Colors.grey,
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'No messages yet. Start a conversation!',
+                          style: TextStyle(color: Colors.grey, fontSize: 16),
+                        ),
+                      ],
+                    ),
+                  );
                 }
               },
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: controller,
-                    onSubmitted: (data) => _sendMessage(data),
-                    decoration: InputDecoration(
-                      hintText: 'Send Message',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide(
-                          color: kPrimaryColor,
-                        ),
-                      ),
-                    ),
-                  ),
+          _buildMessageInput(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMessageInput() {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            offset: Offset(0, -1),
+            blurRadius: 4,
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Material(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(30),
+            child: IconButton(
+              icon: const Icon(Icons.photo, color: Colors.teal),
+              onPressed: () {
+                print("Pick image");
+              },
+            ),
+          ),
+          const SizedBox(width: 8),
+          Material(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(30),
+            child: IconButton(
+              icon: const Icon(Icons.attach_file, color: Colors.teal),
+              onPressed: () {
+                print("Pick file");
+              }, //_pickFile,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: TextField(
+              controller: controller,
+              onSubmitted: (data) => _sendMessage(data),
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.grey[100],
+                hintText: 'Type your message...',
+                hintStyle: const TextStyle(color: Colors.grey),
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 16,
                 ),
-                SizedBox(width: 8),
-                GestureDetector(
-                  onTap: () => _sendMessage(controller.text),
-                  child: Icon(
-                    Icons.send,
-                    color: kPrimaryColor,
-                  ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide.none,
                 ),
-              ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: () => _sendMessage(controller.text),
+            child: CircleAvatar(
+              backgroundColor: Colors.teal,
+              radius: 24,
+              child: const Icon(
+                Icons.send,
+                color: Colors.white,
+              ),
             ),
           ),
         ],
       ),
     );
   }
-
+/*
   void _sendMessage(String data) async {
     if (data.trim().isEmpty) return;
 
@@ -193,7 +346,7 @@ class _ChatPageState extends State<ChatPage> {
       controller.clear();
       _controller.animateTo(
         0,
-        duration: Duration(milliseconds: 500),
+        duration: const Duration(milliseconds: 500),
         curve: Curves.easeIn,
       );
     } catch (e) {
@@ -201,5 +354,82 @@ class _ChatPageState extends State<ChatPage> {
         SnackBar(content: Text('Failed to send message: $e')),
       );
     }
+  }*/
+}
+
+/// Chat Bubble for Current User
+/// Chat Bubble for Current User
+class ChatBuble extends StatelessWidget {
+  final Message message;
+
+  const ChatBuble({super.key, required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.blue,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(12),
+            topRight: Radius.circular(12),
+            bottomLeft: Radius.circular(12),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (message.imageUrl.isNotEmpty)
+              Image.network(message.imageUrl, height: 200, fit: BoxFit.cover),
+            if (message.attachmentUrl.isNotEmpty)
+              TextButton.icon(
+                icon: const Icon(Icons.file_present),
+                label: const Text('Open Attachment'),
+                onPressed: () {
+                  // Handle attachment opening
+                },
+              ),
+            if (message.message.isNotEmpty)
+              Text(
+                message.message,
+                style: const TextStyle(color: Colors.white, fontSize: 16),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Chat Bubble for Recipient
+class ChatBubleForFriend extends StatelessWidget {
+  final Message message;
+
+  const ChatBubleForFriend({super.key, required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.grey[300],
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(12),
+            topRight: Radius.circular(12),
+            bottomRight: Radius.circular(12),
+          ),
+        ),
+        child: Text(
+          message.message, // Updated to access 'message'
+          style: const TextStyle(color: Colors.black87, fontSize: 18),
+        ),
+      ),
+    );
   }
 }

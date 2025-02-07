@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:diabetes/firebase_options.dart';
 import 'package:diabetes/generated/l10n.dart';
+import 'package:diabetes/pages/DoctorHomePage.dart';
 import 'package:diabetes/pages/LocaleProvider.dart';
 import 'package:diabetes/pages/chatPage.dart';
 import 'package:diabetes/pages/home_screen.dart';
@@ -44,10 +45,10 @@ void main() async {
   notificationService.scheduleDailyReminders();
 
 // Schedule notifications every 10 seconds automatically
-  print("Current time1: ${DateTime.now()}");
+  //print("Current time1: ${DateTime.now()}");
 
   Timer.periodic(const Duration(seconds: 5), (timer) {
-    print("Current time2: ${DateTime.now()}");
+    //print("Current time2: ${DateTime.now()}");
     final now = DateTime.now();
     /*   NotificationService.scheduleNotification(
       id: timer.tick, // Unique ID for each notification
@@ -55,7 +56,7 @@ void main() async {
       body: 'This is a recurring notification sent every 10 seconds.',
       scheduledTime: now.add(const Duration(seconds: 10)),
     );*/
-    print("Current time3: ${DateTime.now()}");
+    //print("Current time3: ${DateTime.now()}");
 
     ///////////////////////////////////////////////////
     notificationService.scheduleDailyReminders();
@@ -144,6 +145,7 @@ class MyApp extends StatelessWidget {
       // },
       //home: LogIn(),
       home: OnboardingScreen(),
+      //home: DoctorHomePage(),
     );
   }
 }

@@ -3,15 +3,29 @@ import 'dosage_instructions.dart'; // Import the Dosage Instructions page
 import 'calc.dart';
 
 class MainCalc extends StatelessWidget {
-  const MainCalc({Key? key}) : super(key: key);
+  const MainCalc({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        backgroundColor: const Color.fromARGB(255, 23, 167, 42),
+        title: const Text('Diabetes Management',
+            style: TextStyle(color: Colors.white, fontSize: 24)),
+        centerTitle: true,
+        elevation: 4,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.teal, Color.fromARGB(255, 41, 175, 45)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -39,7 +53,7 @@ class MainCalc extends StatelessWidget {
                   child: Text(
                     'Insulin Dose Calculator \n and Meal Recording ',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
                       color: Color.fromARGB(255, 0, 0, 0),
                     ),

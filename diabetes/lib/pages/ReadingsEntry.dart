@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:diabetes/consts/colors.dart';
+import 'package:diabetes/pages/DiabetesYogaListPage.dart';
 import 'package:diabetes/pages/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +7,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:numberpicker/numberpicker.dart';
 
 class DiabetesPage extends StatefulWidget {
+  const DiabetesPage({super.key});
+
   @override
   _DiabetesPageState createState() => _DiabetesPageState();
 }
@@ -14,20 +16,27 @@ class DiabetesPage extends StatefulWidget {
 class _DiabetesPageState extends State<DiabetesPage> {
   // List to store timeline data, including status and time
   List<Map<String, dynamic>> timelineData = []; // Start with an empty list
+  double _averageGlucose = 0; // Default average glucose value
 
   double _getMinY() {
     if (timelineData.isEmpty) return 0; // Default min value when no data
-    return timelineData
-            .map((data) => double.parse(data["value"].replaceAll(" mg/dL", "")))
-            .reduce((a, b) => a < b ? a : b) -
+    return timelineData.map((data) {
+          final rawValue = data["value"].toString();
+          final numericValue =
+              rawValue.replaceAll(" mg/dL", ""); // Remove the unit
+          return double.parse(numericValue);
+        }).reduce((a, b) => a < b ? a : b) -
         10; // Add padding
   }
 
   double _getMaxY() {
     if (timelineData.isEmpty) return 300; // Default max value when no data
-    return timelineData
-            .map((data) => double.parse(data["value"].replaceAll(" mg/dL", "")))
-            .reduce((a, b) => a > b ? a : b) +
+    return timelineData.map((data) {
+          final rawValue = data["value"].toString();
+          final numericValue =
+              rawValue.replaceAll(" mg/dL", ""); // Remove the unit
+          return double.parse(numericValue);
+        }).reduce((a, b) => a > b ? a : b) +
         10; // Add padding
   }
 
@@ -50,8 +59,8 @@ class _DiabetesPageState extends State<DiabetesPage> {
   }
 
   void _addNewValue() {
-    var formattedDate;
-    var formattedTime;
+    String formattedDate = "";
+    String formattedTime = "";
     showDialog(
       context: context,
       builder: (context) {
@@ -63,18 +72,18 @@ class _DiabetesPageState extends State<DiabetesPage> {
           builder: (context, setDialogState) {
             return AlertDialog(
               backgroundColor: const Color.fromARGB(255, 227, 223, 223),
-              title:
-                  Text("Add New Entry", style: TextStyle(color: Colors.black)),
+              title: const Text("Add New Entry",
+                  style: TextStyle(color: Colors.black)),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text("Select Glucose Value",
+                    const Text("Select Glucose Value",
                         style: TextStyle(fontSize: 18, color: Colors.black)),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     NumberPicker(
                       selectedTextStyle:
-                          TextStyle(color: Colors.black, fontSize: 30),
+                          const TextStyle(color: Colors.black, fontSize: 30),
                       value: localSelectedValue, // Use local variable
                       minValue: 0,
                       maxValue: 300,
@@ -85,17 +94,18 @@ class _DiabetesPageState extends State<DiabetesPage> {
                           localSelectedValue = value; // Update locally
                         });
                       },
-                      textStyle: TextStyle(
+                      textStyle: const TextStyle(
                         fontSize: 30,
-                        color: const Color.fromARGB(255, 120, 125, 120),
+                        color: Color.fromARGB(255, 120, 125, 120),
                       ),
                     ),
                     Text("Selected: $localSelectedValue mg/dL",
-                        style: TextStyle(fontSize: 20, color: Colors.black)),
-                    SizedBox(height: 16),
-                    Text("Select Status",
+                        style:
+                            const TextStyle(fontSize: 20, color: Colors.black)),
+                    const SizedBox(height: 16),
+                    const Text("Select Status",
                         style: TextStyle(fontSize: 18, color: Colors.black)),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
@@ -125,7 +135,7 @@ class _DiabetesPageState extends State<DiabetesPage> {
                                           : Colors.grey,
                                     ),
                                   ),
-                                  SizedBox(height: 8),
+                                  const SizedBox(height: 8),
                                   Text(entry.key,
                                       style: TextStyle(
                                           color: isSelected
@@ -144,7 +154,8 @@ class _DiabetesPageState extends State<DiabetesPage> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: Text("Cancel", style: TextStyle(color: Colors.black)),
+                  child: const Text("Cancel",
+                      style: TextStyle(color: Colors.black)),
                 ),
                 ElevatedButton(
                   onPressed: () async {
@@ -198,12 +209,13 @@ class _DiabetesPageState extends State<DiabetesPage> {
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: const Color.fromARGB(255, 40, 185, 57),
-                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: Text("Add"),
+                  child: const Text("Add"),
                 ),
               ],
             );
@@ -216,21 +228,43 @@ class _DiabetesPageState extends State<DiabetesPage> {
   void _fetchGlucoseEntries() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      final snapshot = await FirebaseFirestore.instance
-          .collection('glucose_entries')
-          .where('userId', isEqualTo: user.uid)
-          .get();
+      try {
+        final snapshot = await FirebaseFirestore.instance
+            .collection('glucose_entries')
+            .where('userId', isEqualTo: user.uid)
+            .get();
+
+        setState(() {
+          timelineData = snapshot.docs.map((doc) {
+            return {
+              "value": double.parse(doc["value"].replaceAll(" mg/dL", "")),
+              "date": doc["date"],
+              "time": doc["time"],
+              "status": doc["status"],
+              "icon": statusIcons[doc["status"]],
+            };
+          }).toList();
+          _calculateAverageGlucose(timelineData);
+        });
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error fetching data: $e")),
+        );
+      }
+    }
+  }
+
+  /// Calculate average glucose
+  void _calculateAverageGlucose(List<Map<String, dynamic>> timelineData) {
+    if (timelineData.isNotEmpty) {
+      final totalGlucose = timelineData.fold<double>(
+        0.0,
+        (sum, entry) => sum + (entry["value"] ?? 0.0),
+      );
 
       setState(() {
-        timelineData = snapshot.docs.map((doc) {
-          return {
-            "value": doc["value"],
-            "date": doc["date"],
-            "time": doc["time"],
-            "status": doc["status"],
-            "icon": statusIcons[doc["status"]],
-          };
-        }).toList();
+        _averageGlucose = totalGlucose / timelineData.length;
+        print(timelineData.length);
       });
     }
   }
@@ -259,39 +293,56 @@ class _DiabetesPageState extends State<DiabetesPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             //Navigator.pushReplacementNamed(context, '/home');
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => HomeScreen()),
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
             );
           },
         ),
         backgroundColor: const Color.fromARGB(255, 15, 177, 15),
-        title: Text("Diabetes Average",
+        title: const Text("Diabetes Average",
             style: TextStyle(color: Colors.white, fontSize: 24)),
         centerTitle: true,
-        elevation: 0,
+        elevation: 4,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.teal, Color.fromARGB(255, 41, 175, 45)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: Column(
         children: [
           Container(
-            color: const Color.fromARGB(255, 15, 177, 15),
-            padding: EdgeInsets.all(20),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.teal, Color.fromARGB(255, 41, 175, 45)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            padding: const EdgeInsets.all(20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Current",
+                    const Text("Average Glucose",
                         style: TextStyle(color: Colors.white, fontSize: 18)),
-                    Text("120 mg/dL",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold)),
+                    Text(
+                      "${_averageGlucose.toStringAsFixed(1)} mg/dL",
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold),
+                    ),
                   ],
                 ),
                 Column(
@@ -311,13 +362,14 @@ class _DiabetesPageState extends State<DiabetesPage> {
           ),
           Container(
             height: 200,
-            padding: EdgeInsets.only(left: 28, right: 8, top: 12, bottom: 8),
+            padding:
+                const EdgeInsets.only(left: 28, right: 8, top: 12, bottom: 8),
             child: LineChart(
               LineChartData(
                 minY: _getMinY(),
                 maxY: _getMaxY(),
                 titlesData: FlTitlesData(
-                  topTitles: AxisTitles(
+                  topTitles: const AxisTitles(
                     sideTitles: SideTitles(showTitles: false),
                   ),
                   leftTitles: AxisTitles(
@@ -326,7 +378,7 @@ class _DiabetesPageState extends State<DiabetesPage> {
                       interval:
                           (_getMaxY() - _getMinY()) / 5, // Dynamic intervals
                       getTitlesWidget: (value, meta) => Text('${value.toInt()}',
-                          style: TextStyle(color: Colors.black)),
+                          style: const TextStyle(color: Colors.black)),
                     ),
                   ),
                   bottomTitles: AxisTitles(
@@ -344,9 +396,8 @@ class _DiabetesPageState extends State<DiabetesPage> {
                                 const EdgeInsets.symmetric(horizontal: 12.0),
                             child: Text(
                               "${dateParts[0]} ${dateParts[1]}",
-                              style: TextStyle(
-                                  color:
-                                      const Color.fromARGB(255, 123, 122, 122),
+                              style: const TextStyle(
+                                  color: Color.fromARGB(255, 123, 122, 122),
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center,
@@ -365,9 +416,10 @@ class _DiabetesPageState extends State<DiabetesPage> {
                   LineChartBarData(
                     spots: timelineData.map((data) {
                       final index = timelineData.indexOf(data).toDouble();
-                      final glucoseValue =
-                          double.parse(data["value"].replaceAll(" mg/dL", ""));
-                      return FlSpot(index, glucoseValue);
+                      final rawValue = data["value"].toString();
+                      final glucoseValue = double.parse(
+                          rawValue.replaceAll(" mg/dL", "")); // Parse to double
+                      return FlSpot(index, glucoseValue); // Use double values
                     }).toList(),
                     isCurved: true,
                     barWidth: 3,
@@ -380,9 +432,9 @@ class _DiabetesPageState extends State<DiabetesPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 8.0),
+                const Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                   child: Text(
                     "Timeline",
                     style: TextStyle(
@@ -395,12 +447,12 @@ class _DiabetesPageState extends State<DiabetesPage> {
                 ),
                 Expanded(
                   child: ListView.builder(
-                    padding: EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
                     itemCount: timelineData.length,
                     itemBuilder: (context, index) {
                       final item = timelineData[index];
                       return TimelineTile(
-                        value: item["value"],
+                        value: "${item["value"].toStringAsFixed(1)} mg/dL",
                         date: item["date"],
                         time: item["time"],
                         status: item["status"],
@@ -414,11 +466,75 @@ class _DiabetesPageState extends State<DiabetesPage> {
           ),
         ],
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         onPressed: _addNewValue,
-        child: Icon(Icons.add),
         foregroundColor: Colors.white,
         backgroundColor: const Color.fromARGB(255, 15, 177, 15),
+        child: const Icon(Icons.add, size: 32),
+        shape: const CircleBorder(),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        notchMargin: 9.0,
+        shape: const CircularNotchedRectangle(),
+        color: const Color.fromARGB(255, 0, 0, 0),
+        child: SizedBox(
+          height: 60,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.home, color: Colors.white, size: 34),
+                onPressed: () {
+                  // Navigate to the home screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            const HomeScreen()), // Replace HomeScreen with your actual home screen widget
+                  );
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.feed, color: Colors.white, size: 34),
+                onPressed: () {
+                  // Navigate to the readings entry screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            const HomeScreen()), // Replace ReadingsEntry with your actual readings entry screen widget
+                  );
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.add, color: Colors.white, size: 34),
+                onPressed: () {
+                  // Navigate to the home screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            const DiabetesPage()), // Replace HomeScreen with your actual home screen widget
+                  );
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.fitness_center,
+                    color: Colors.white, size: 30),
+                onPressed: () {
+                  // Navigate to the custom chart screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            const DiabetesYogaListPage()), // Replace CustomChartPage with your actual custom chart screen widget
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -434,6 +550,7 @@ class TimelineTile extends StatelessWidget {
   final bool isLast; // To control the ending line
 
   const TimelineTile({
+    super.key,
     required this.value,
     required this.date,
     required this.time,
@@ -454,7 +571,7 @@ class TimelineTile extends StatelessWidget {
             isFirst: isFirst,
             isLast: isLast,
           ),
-          child: Container(
+          child: const SizedBox(
             width: 20, // Width for the timeline
             height: 100, // Adjust based on content
           ),
@@ -463,7 +580,7 @@ class TimelineTile extends StatelessWidget {
         // Event details
         Expanded(
           child: Card(
-            margin: EdgeInsets.symmetric(vertical: 8),
+            margin: const EdgeInsets.symmetric(vertical: 8),
             color: const Color.fromARGB(255, 240, 240, 240),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -482,12 +599,12 @@ class TimelineTile extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(value,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 18)),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text("$date at $time",
-                            style: TextStyle(color: Colors.grey)),
-                        SizedBox(height: 4),
+                            style: const TextStyle(color: Colors.grey)),
+                        const SizedBox(height: 4),
                         Text("Status: $status"),
                       ],
                     ),
@@ -524,7 +641,7 @@ class TimelinePainter extends CustomPainter {
       ..color = circleColor // Use the provided circle color
       ..style = PaintingStyle.fill;
 
-    final double circleRadius = 8.0;
+    const double circleRadius = 8.0;
 
     // Draw top line
     if (!isFirst) {

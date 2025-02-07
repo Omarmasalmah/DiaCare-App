@@ -6,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+// import 'package:firebase_storage/firebase_storage.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:diabetes/constants.dart';
 
@@ -15,8 +15,7 @@ class MainInfoPage extends StatefulWidget {
   final String selectedRole; // Receive selected role as a parameter
 
   const MainInfoPage(
-      {Key? key, required this.phoneNumber, required this.selectedRole})
-      : super(key: key);
+      {super.key, required this.phoneNumber, required this.selectedRole});
 
   @override
   _MainInfoPageState createState() => _MainInfoPageState();
@@ -107,14 +106,15 @@ class _MainInfoPageState extends State<MainInfoPage> {
   Future<void> signUp(BuildContext context) async {
     if (!_isChecked) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Please accept the terms and conditions.")),
+        const SnackBar(
+            content: Text("Please accept the terms and conditions.")),
       );
       return;
     }
 
     if (passwordController.text != confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Passwords do not match.")),
+        const SnackBar(content: Text("Passwords do not match.")),
       );
       return;
     }
@@ -128,14 +128,14 @@ class _MainInfoPageState extends State<MainInfoPage> {
 
       String imageUrl = 'images/NoProfilePic.png'; // Default image URL
 
-      if (_image != null) {
-        final storageRef = FirebaseStorage.instance
-            .ref()
-            .child('profile_images')
-            .child(credential.user!.uid);
-        await storageRef.putFile(_image!);
-        imageUrl = await storageRef.getDownloadURL();
-      }
+      // if (_image != null) {
+      //   final storageRef = FirebaseStorage.instance
+      //       .ref()
+      //       .child('profile_images')
+      //       .child(credential.user!.uid);
+      //   await storageRef.putFile(_image!);
+      //   imageUrl = await storageRef.getDownloadURL();
+      // }
 
       await FirebaseFirestore.instance
           .collection('Users')
@@ -161,7 +161,7 @@ class _MainInfoPageState extends State<MainInfoPage> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => LogIn()),
+        MaterialPageRoute(builder: (context) => const LogIn()),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -196,8 +196,10 @@ class _MainInfoPageState extends State<MainInfoPage> {
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon),
+        filled: true,
+        fillColor: Colors.grey[200],
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(12),
         ),
       ),
     );
@@ -208,22 +210,43 @@ class _MainInfoPageState extends State<MainInfoPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 8),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           value: value,
           onChanged: onChanged,
           items: items.map<DropdownMenuItem<String>>((String item) {
             return DropdownMenuItem<String>(
               value: item,
-              child: Text(item),
+              child: Text(
+                item,
+                style: const TextStyle(fontSize: 14, color: Colors.black87),
+              ),
             );
           }).toList(),
           decoration: InputDecoration(
-            labelText: label,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+            filled: true,
+            fillColor: Colors.grey[100],
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            enabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.grey, width: 1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.teal, width: 2),
+              borderRadius: BorderRadius.circular(12),
             ),
           ),
+          icon: const Icon(Icons.arrow_drop_down, color: Colors.teal),
+          dropdownColor: Colors.white,
         ),
       ],
     );
@@ -234,8 +257,8 @@ class _MainInfoPageState extends State<MainInfoPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Terms and Conditions'),
-          content: SingleChildScrollView(
+          title: const Text('Terms and Conditions'),
+          content: const SingleChildScrollView(
             child: Text(
               termsAndConditions,
               // Add your terms and conditions text here
@@ -246,7 +269,7 @@ class _MainInfoPageState extends State<MainInfoPage> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Close'),
+              child: const Text('Close'),
             ),
           ],
         );
@@ -258,14 +281,14 @@ class _MainInfoPageState extends State<MainInfoPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Weight (kg)',
+        const Text('Weight (kg)',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Container(
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
           ),
           child: NumberPicker(
             value: selectedWeight,
@@ -289,14 +312,25 @@ class _MainInfoPageState extends State<MainInfoPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text("Personal Information"),
-        backgroundColor: Colors.teal,
+        title: const Text("Personal Information",
+            style: TextStyle(fontSize: 20, color: Colors.white)),
+        centerTitle: true,
+        elevation: 4,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.teal, Color.fromARGB(255, 41, 175, 45)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -307,18 +341,25 @@ class _MainInfoPageState extends State<MainInfoPage> {
             //     backgroundImage: _image != null
             //         ? FileImage(_image!)
             //         : AssetImage('images/NoProfilePic.png') as ImageProvider,
+            //     child: _image == null
+            //         ? const Icon(
+            //             Icons.camera_alt,
+            //             size: 30,
+            //             color: Colors.grey,
+            //           )
+            //         : null,
             //   ),
             // ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildTextField(nameController, 'Name', Icons.person),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             TextField(
               controller: birthdateController,
               decoration: InputDecoration(
-                prefixIcon: Icon(Icons.calendar_today),
+                prefixIcon: const Icon(Icons.calendar_today),
                 labelText: "Birthdate",
                 border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 filled: true,
                 fillColor: Colors.grey[200],
               ),
@@ -336,23 +377,23 @@ class _MainInfoPageState extends State<MainInfoPage> {
                 }
               },
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildDropdown('Diabetes Type', selectedDiabetesType,
                 ['Pre', 'Type I', 'Type II'], (String? newValue) {
               setState(() {
                 selectedDiabetesType = newValue!;
               });
             }),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Container(
-              padding: EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
                 children: [
-                  Text('Gender : '),
+                  const Text('Gender : '),
                   Radio<String>(
                     value: 'Male',
                     groupValue: selectedGender,
@@ -362,7 +403,7 @@ class _MainInfoPageState extends State<MainInfoPage> {
                       });
                     },
                   ),
-                  Text('Male'),
+                  const Text('Male'),
                   Radio<String>(
                     value: 'Female',
                     groupValue: selectedGender,
@@ -372,20 +413,20 @@ class _MainInfoPageState extends State<MainInfoPage> {
                       });
                     },
                   ),
-                  Text('Female'),
+                  const Text('Female'),
                 ],
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildWeightPicker(),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildTextField(emailController, 'Email', Icons.email),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildTextField(passwordController, 'Password', Icons.password),
-            SizedBox(height: 16),
-            _buildTextField(confirmPasswordController, 'Confirm Password',
-                Icons.password_sharp),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
+            _buildTextField(
+                confirmPasswordController, 'Confirm Password', Icons.lock),
+            const SizedBox(height: 16),
             Row(
               children: [
                 Checkbox(
@@ -400,7 +441,7 @@ class _MainInfoPageState extends State<MainInfoPage> {
                 Expanded(
                   child: GestureDetector(
                     onTap: _showTermsAndConditions,
-                    child: Text(
+                    child: const Text(
                       "I accept the terms and conditions",
                       style: TextStyle(
                         fontSize: 14,
@@ -412,18 +453,19 @@ class _MainInfoPageState extends State<MainInfoPage> {
                 ),
               ],
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.teal,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
               ),
-              child: Text(
+              child: const Text(
                 "Sign Up",
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 18, color: Colors.white),
               ),
               onPressed: () {
                 signUp(context);

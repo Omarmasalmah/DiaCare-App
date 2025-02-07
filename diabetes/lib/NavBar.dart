@@ -1,5 +1,6 @@
 import 'package:diabetes/generated/l10n.dart';
 import 'package:diabetes/pages/DiabetesYogaListPage.dart';
+import 'package:diabetes/pages/DoctorHomePage.dart';
 import 'package:diabetes/pages/LocaleProvider.dart';
 import 'package:diabetes/pages/UserListPage.dart';
 import 'package:diabetes/pages/chatPage.dart';
@@ -130,11 +131,43 @@ class _NavBarState extends State<NavBar> {
           ListTile(
             title: Text(S.of(context).translate('home')),
             leading: const Icon(Icons.home),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => HomeScreen()),
-              );
+            onTap: () async {
+              User? user = FirebaseAuth.instance.currentUser;
+              if (user != null) {
+                DocumentSnapshot userDoc = await FirebaseFirestore.instance
+                    .collection('Users')
+                    .doc(user.uid)
+                    .get();
+
+                if (userDoc.exists) {
+                  final data = userDoc.data() as Map<String, dynamic>;
+                  final role = data['role'];
+
+                  if (role == 'patient') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomeScreen()),
+                    );
+                  } else if (role == 'doctor') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => DoctorHomePage()),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Unknown role: $role')),
+                    );
+                  }
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('User document does not exist')),
+                  );
+                }
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('No user is currently signed in')),
+                );
+              }
             },
           ),
           ListTile(
@@ -200,18 +233,6 @@ class _NavBarState extends State<NavBar> {
                     builder: (context) =>
                         DiabetesYogaListPage()), // Navigate to UserListPage
               );
-            },
-          ),
-          ListTile(
-            title: Text(S.of(context).translate('chart')),
-            leading: const Icon(Icons.pie_chart),
-            onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //       builder: (context) =>
-              //           HealthDashboardWidget()), // Navigate to UserListPage
-              // );
             },
           ),
           ListTile(

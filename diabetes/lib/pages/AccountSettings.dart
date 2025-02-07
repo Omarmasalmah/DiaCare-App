@@ -1,19 +1,21 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:diabetes/constants.dart';
-import 'package:diabetes/generated/l10n.dart';
 import 'package:diabetes/pages/EmergencyContactsPage.dart';
 import 'package:diabetes/pages/LocaleProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:numberpicker/numberpicker.dart';
+// import 'package:firebase_storage/firebase_storage.dart';
 import 'package:provider/provider.dart';
+import 'package:diabetes/Cloudinary.dart';
 
 class AccountSettingsPage extends StatefulWidget {
+  const AccountSettingsPage({super.key});
+
   @override
   _AccountSettingsPageState createState() => _AccountSettingsPageState();
 }
@@ -88,55 +90,55 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
       final ImagePicker picker = ImagePicker();
       final XFile? pickedFile =
           await picker.pickImage(source: ImageSource.gallery);
+
       if (pickedFile == null) {
+        if (!mounted) return; // Check if widget is still mounted
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text("No image selected."),
           ),
         );
         return;
       }
 
-      // Firebase Storage Reference with a unique path
+      // Firebase user ID
       final userId = FirebaseAuth.instance.currentUser?.uid;
       if (userId == null) {
+        if (!mounted) return; // Check if widget is still mounted
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("User not authenticated.")),
+          const SnackBar(content: Text("User not authenticated.")),
         );
         return;
       }
 
-      final storageRef = FirebaseStorage.instance
-          .ref()
-          .child(
-              'profile_images') // Firebase will create this folder automatically
-          .child(
-              '$userId/${DateTime.now().millisecondsSinceEpoch}.jpg'); // Unique filename
-
-      // Upload Image
+      // Upload the image to Cloudinary
       final imageBytes = await pickedFile.readAsBytes();
-      //await storageRef.putData(imageBytes);
-      final base64String = base64Encode(imageBytes);
+      final imageUrl = await CloudinaryService.uploadBytes(imageBytes, "image");
 
-      // Get the download URL
-      //final downloadUrl = await storageRef.getDownloadURL();
+      if (imageUrl == null) {
+        if (!mounted) return; // Check if widget is still mounted
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Error uploading image to Cloudinary.")),
+        );
+        return;
+      }
 
-      // Update Firestore with the new URL
-      // await FirebaseFirestore.instance.collection('users').doc(userId).update({
-      //   'profileImage': downloadUrl,
-      // });
+      // Update Firestore with the image URL
       await FirebaseFirestore.instance.collection('Users').doc(userId).update({
-        'profileImage': base64String,
+        'profileImage': imageUrl,
       });
 
+      if (!mounted) return; // Check if widget is still mounted
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Profile picture updated successfully!")),
+        const SnackBar(content: Text("Profile picture updated successfully!")),
       );
 
-      // setState(() {
-      //   _profileImageUrl = downloadUrl;
-      // });
+      //Optionally update state to reflect the new profile image
+      setState(() {
+        _profileImageUrl = imageUrl;
+      });
     } catch (e) {
+      if (!mounted) return; // Check if widget is still mounted
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Error updating profile picture: $e")),
       );
@@ -196,123 +198,156 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
   Future<void> _showChangePasswordDialog() async {
     final TextEditingController oldPasswordController = TextEditingController();
     final TextEditingController newPasswordController = TextEditingController();
+    bool oldPasswordVisible = false;
+    bool newPasswordVisible = false;
 
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // User must tap button to dismiss
+      barrierDismissible: false, // Prevent dialog dismissal by tapping outside
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Change Password'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('Enter your old password and new password.'),
-                TextField(
-                  controller: oldPasswordController,
-                  decoration: InputDecoration(
-                    labelText: 'Old Password',
-                    hintText: 'Enter your old password',
-                  ),
-                  obscureText: true,
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              title: const Text(
+                'Change Password',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    const Text(
+                      'Enter your old password and new password.',
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: oldPasswordController,
+                      decoration: InputDecoration(
+                        labelText: 'Old Password',
+                        hintText: 'Enter your old password',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: Colors.teal),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: Colors.green),
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            oldPasswordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              oldPasswordVisible = !oldPasswordVisible;
+                            });
+                          },
+                        ),
+                      ),
+                      obscureText: !oldPasswordVisible,
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: newPasswordController,
+                      decoration: InputDecoration(
+                        labelText: 'New Password',
+                        hintText: 'Enter your new password',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: Colors.teal),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: Colors.green),
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            newPasswordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              newPasswordVisible = !newPasswordVisible;
+                            });
+                          },
+                        ),
+                      ),
+                      obscureText: !newPasswordVisible,
+                    ),
+                  ],
                 ),
-                TextField(
-                  controller: newPasswordController,
-                  decoration: InputDecoration(
-                    labelText: 'New Password',
-                    hintText: 'Enter your new password',
+              ),
+              actions: <Widget>[
+                TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.red,
+                    textStyle: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  obscureText: true,
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.teal,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Update',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () async {
+                    final oldPassword = oldPasswordController.text.trim();
+                    final newPassword = newPasswordController.text.trim();
+                    if (oldPassword.isNotEmpty && newPassword.isNotEmpty) {
+                      try {
+                        User? user = _auth.currentUser;
+                        if (user != null) {
+                          // Re-authenticate the user
+                          AuthCredential credential =
+                              EmailAuthProvider.credential(
+                            email: user.email!,
+                            password: oldPassword,
+                          );
+                          await user.reauthenticateWithCredential(credential);
+
+                          // Update the password
+                          await user.updatePassword(newPassword);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content:
+                                    Text('Password updated successfully.')),
+                          );
+                          Navigator.of(context).pop();
+                        }
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Failed to update password.')),
+                        );
+                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text(
+                                'Please enter both old and new passwords.')),
+                      );
+                    }
+                  },
                 ),
               ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text('Update'),
-              onPressed: () async {
-                final oldPassword = oldPasswordController.text.trim();
-                final newPassword = newPasswordController.text.trim();
-                if (oldPassword.isNotEmpty && newPassword.isNotEmpty) {
-                  try {
-                    User? user = _auth.currentUser;
-                    if (user != null) {
-                      // Re-authenticate the user
-                      AuthCredential credential = EmailAuthProvider.credential(
-                        email: user.email!,
-                        password: oldPassword,
-                      );
-                      await user.reauthenticateWithCredential(credential);
-
-                      // Update the password
-                      await user.updatePassword(newPassword);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                            content: Text('Password updated successfully.')),
-                      );
-                      Navigator.of(context).pop();
-                    }
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Failed to update password.')),
-                    );
-                  }
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content:
-                            Text('Please enter both old and new passwords.')),
-                  );
-                }
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showWeightPickerDialog() {
-    int selectedWeight = weight.toInt();
-
-    showDialog<int>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Select Weight'),
-          content: NumberPicker(
-            value: selectedWeight,
-            minValue: 0,
-            maxValue: 200,
-            onChanged: (value) {
-              setState(() {
-                selectedWeight = value;
-              });
-            },
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text('OK'),
-              onPressed: () {
-                setState(() {
-                  weight = selectedWeight.toDouble();
-                  _updateField('weight', weight.toString());
-                });
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+            );
+          },
         );
       },
     );
@@ -326,7 +361,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
           await auth.canCheckBiometrics || await auth.isDeviceSupported();
       if (!canAuthenticate) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
               content: Text(
                   "Biometric authentication is not supported on this device.")),
         );
@@ -337,7 +372,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
           await auth.getAvailableBiometrics();
       if (!availableBiometrics.contains(BiometricType.fingerprint)) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
               content: Text(
                   "No fingerprints enrolled. Please set up fingerprints on your device.")),
         );
@@ -378,10 +413,28 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        title: Text(S.of(context).translate('accountSettings')),
-        backgroundColor: Colors.teal,
+        title: const Text("Account Settings",
+            style: TextStyle(color: Colors.white, fontSize: 24)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back,
+              color: Colors.white), // White back button
+          onPressed: () {
+            Navigator.of(context).pop(); // Handle back navigation
+          },
+        ),
+        centerTitle: true,
+        elevation: 4,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.teal, Color.fromARGB(255, 41, 175, 45)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -390,13 +443,13 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildProfileSection(),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               _buildHealthPreferencesSection(),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               _buildRemindersSection(),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               _buildPrivacySection(),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               _buildEmergencySection(),
             ],
           ),
@@ -413,17 +466,19 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
           .get(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasError) {
-          return Center(child: Text("Error loading profile data"));
+          return const Center(child: Text("Error loading profile data"));
         }
         // if (!snapshot.hasData || !snapshot.data!.exists) {
         //   return Center(child: Text("Profile data not found"));
         // }
 
         final doc = snapshot.data!;
+        _profileImageUrl = _userProfile?['profileImage'];
         return Card(
+          elevation: 5,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           child: Column(
@@ -433,42 +488,51 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                   backgroundImage: _profileImageUrl != null &&
                           _profileImageUrl!.startsWith('http')
                       ? NetworkImage(_profileImageUrl!)
-                      : AssetImage('images/NoProfilePic.png') as ImageProvider,
+                      : const AssetImage('images/NoProfilePic.png')
+                          as ImageProvider,
                 ),
-                title: Text("Profile Picture"),
-                trailing: Icon(Icons.edit),
+                title: const Text("Profile Picture",
+                    style: TextStyle(fontSize: 18)),
+                trailing: const Icon(Icons.edit, color: Colors.teal),
                 onTap: _updateProfileImage,
               ),
               ListTile(
-                  title: Text(S.of(context).translate('name')),
+                  leading: Icon(Icons.person, color: Colors.teal),
+                  title: const Text("Name"),
                   subtitle: Text(_userProfile?['name'] ?? 'Loading...'),
-                  trailing: Icon(Icons.edit),
+                  //   trailing: const Icon(Icons.edit),
                   onTap: () => _showUpdateFieldDialog(
                       "name", _userProfile?['name'] ?? '')),
               ListTile(
-                title: Text(S.of(context).translate('email')),
+                leading: Icon(Icons.email, color: Colors.teal),
+                title: const Text("Email"),
                 subtitle: Text(_userProfile?['email'] ?? 'Loading...'),
                 // trailing: Icon(Icons.edit),
-                onTap: () {},
+                onTap: () {
+                  //        _showUpdateFieldDialog('email', _userProfile?['email'] ?? '');
+                },
               ),
               ListTile(
-                title: Text(S.of(context).translate('phoneNumber')),
+                leading: Icon(Icons.phone, color: Colors.teal),
+                title: const Text("Phone Number"),
                 subtitle: Text(_userProfile?['phoneNumber'] ?? 'Loading...'),
-                trailing: Icon(Icons.edit),
-                onTap: () => _showUpdateFieldDialog(
+                //   trailing: const Icon(Icons.edit),
+                onTap: () => _showNumberInputDialog(
                     "phoneNumber", _userProfile?['phoneNumber'] ?? ''),
               ),
               ListTile(
-                title: Text(S.of(context).translate('dob')),
+                leading: Icon(Icons.calendar_month, color: Colors.teal),
+                title: const Text("Date of Birth"),
                 subtitle: Text(_userProfile?['birthdate'] ?? 'Loading...'),
-                trailing: Icon(Icons.edit),
+                //  trailing: const Icon(Icons.edit),
                 onTap: () => _showUpdateFieldDialog(
                     "birthdate", _userProfile?['birthdate'] ?? ''),
               ),
               ListTile(
-                title: Text(S.of(context).translate('languagePreferences')),
+                leading: Icon(Icons.language, color: Colors.teal),
+                title: const Text("Language Preferences"),
                 subtitle: Text(_userProfile?['prefLanguage'] ?? 'Loading...'),
-                trailing: Icon(Icons.edit),
+                //   trailing: const Icon(Icons.edit),
                 onTap: _showUpdateLanguageDialog,
               ),
             ],
@@ -481,52 +545,53 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
   // Other sections (_buildHealthPreferencesSection, _buildRemindersSection, etc.) remain unchanged
   Widget _buildHealthPreferencesSection() {
     return Card(
+      elevation: 5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Column(
         children: [
           ListTile(
-            title: Text("Target Glucose Range"),
+            leading: const Icon(Icons.water_drop, color: Colors.teal),
+            title: const Text("Target Glucose Range",
+                style: TextStyle(color: Colors.black)),
             subtitle: Text(
                 "Fasting: $fastingTarget mg/dL\nPost-Meal: $postMealTarget mg/dL"),
-            trailing: Icon(Icons.edit),
+            //   trailing: const Icon(Icons.edit),
             onTap: () {
               // Handle glucose range update
             },
           ),
           ListTile(
-            title: Text("Daily Insulin Requirements"),
+            leading: const Icon(Icons.medical_services, color: Colors.teal),
+            title: const Text("Daily Insulin Requirements"),
             subtitle: Text("$dailyInsulin units"),
-            trailing: Icon(Icons.edit),
+            //   trailing: const Icon(Icons.edit),
             onTap: () {
               // Handle insulin requirements update
             },
           ),
           ListTile(
-            title: Text("Carbohydrate-to-Insulin Ratio"),
-            subtitle: Text("1:15"),
-            trailing: Icon(Icons.edit),
+            leading: const Icon(Icons.calculate, color: Colors.teal),
+            title: const Text("Carbohydrate-to-Insulin Ratio"),
+            subtitle: const Text("1:15"),
+            //   trailing: const Icon(Icons.edit),
             onTap: () {
               // Handle ratio update
             },
           ),
           ListTile(
-            title: Text("Weight"),
-            subtitle: Text("$weight kg"),
-            trailing: Icon(Icons.edit),
-            onTap: () => _showWeightPickerDialog(),
-          ),
-          ListTile(
-            title: Text("Height"),
-            subtitle: Text("$height cm"),
-            trailing: Icon(Icons.edit),
+            leading: const Icon(Icons.fitness_center, color: Colors.teal),
+            title: const Text("Weight & Height"),
+            subtitle: Text("$weight kg, $height cm"),
+            //    trailing: const Icon(Icons.edit),
             onTap: () {
               // Handle weight and height update
             },
           ),
           ListTile(
-            title: Text("Diabetes Type"),
+            leading: const Icon(Icons.medical_services, color: Colors.teal),
+            title: const Text("Diabetes Type"),
             subtitle: Text(diabetesType),
-            trailing: Icon(Icons.edit),
+            //    trailing: const Icon(Icons.edit),
             onTap: () {
               // Handle diabetes type update
             },
@@ -538,44 +603,77 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
 
   Widget _buildRemindersSection() {
     return Card(
+      elevation: 5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Column(
         children: [
           SwitchListTile(
-            title: Text("Medication Reminders"),
+            title: const Text("Medication Reminders"),
             value: medicationReminders,
             onChanged: (value) {
               setState(() {
                 medicationReminders = value;
               });
             },
+            activeColor: const Color.fromARGB(
+                255, 2, 150, 0), // Thumb color when the switch is ON
+            activeTrackColor: const Color.fromARGB(255, 45, 221, 0)
+                .withOpacity(0.5), // Track color when the switch is ON
+            inactiveThumbColor:
+                Colors.grey, // Thumb color when the switch is OFF
+            inactiveTrackColor: Colors.grey
+                .withOpacity(0.5), // Track color when the switch is OFF
           ),
           SwitchListTile(
-            title: Text("Blood Glucose Check Reminders"),
+            title: const Text("Blood Glucose Check Reminders"),
             value: glucoseReminders,
             onChanged: (value) {
               setState(() {
                 glucoseReminders = value;
               });
             },
+            activeColor: const Color.fromARGB(
+                255, 2, 150, 0), // Thumb color when the switch is ON
+            activeTrackColor: const Color.fromARGB(255, 45, 221, 0)
+                .withOpacity(0.5), // Track color when the switch is ON
+            inactiveThumbColor:
+                Colors.grey, // Thumb color when the switch is OFF
+            inactiveTrackColor: Colors.grey
+                .withOpacity(0.5), // Track color when the switch is OFF
           ),
           SwitchListTile(
-            title: Text("Appointment Reminders"),
+            title: const Text("Appointment Reminders"),
             value: appointmentReminders,
             onChanged: (value) {
               setState(() {
                 appointmentReminders = value;
               });
             },
+            activeColor: const Color.fromARGB(
+                255, 2, 150, 0), // Thumb color when the switch is ON
+            activeTrackColor: const Color.fromARGB(255, 45, 221, 0)
+                .withOpacity(0.5), // Track color when the switch is ON
+            inactiveThumbColor:
+                Colors.grey, // Thumb color when the switch is OFF
+            inactiveTrackColor: Colors.grey
+                .withOpacity(0.5), // Track color when the switch is OFF
           ),
           SwitchListTile(
-            title: Text("Physical Activity Reminders"),
+            title: const Text("Physical Activity Reminders"),
             value: physicalActivityReminders,
             onChanged: (value) {
               setState(() {
                 physicalActivityReminders = value;
               });
             },
+            activeColor: const Color.fromARGB(
+                255, 2, 150, 0), // Thumb color when the switch is ON
+            activeTrackColor: const Color.fromARGB(255, 45, 221, 0)
+                .withOpacity(0.5), // Track color when the switch is ON
+            inactiveThumbColor:
+                Colors.grey, // Thumb color when the switch is OFF
+            inactiveTrackColor: Colors.grey
+                .withOpacity(0.5), // Track color when the switch is OFF
           ),
         ],
       ),
@@ -584,11 +682,12 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
 
   Widget _buildPrivacySection() {
     return Card(
+      elevation: 5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Column(
         children: [
           SwitchListTile(
-            title: Text("Enable Fingerprint Authentication"),
+            title: const Text("Enable Fingerprint Authentication"),
             value: fingerprintEnabled,
             onChanged: (value) async {
               bool authenticated = await _authenticateWithFingerprint();
@@ -599,28 +698,38 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                 await _saveFingerprintPreference(value);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Authentication failed.")),
+                  const SnackBar(content: Text("Authentication failed.")),
                 );
               }
             },
+            activeColor: const Color.fromARGB(
+                255, 2, 150, 0), // Thumb color when the switch is ON
+            activeTrackColor: const Color.fromARGB(255, 45, 221, 0)
+                .withOpacity(0.5), // Track color when the switch is ON
+            inactiveThumbColor:
+                Colors.grey, // Thumb color when the switch is OFF
+            inactiveTrackColor: Colors.grey
+                .withOpacity(0.5), // Track color when the switch is OFF
           ),
           ListTile(
-            title: Text("Change Password"),
-            trailing: Icon(Icons.lock),
+            leading: Icon(Icons.lock, color: Colors.teal),
+            title: const Text("Change Password"),
+            trailing: const Icon(Icons.arrow_forward_ios),
             onTap: () {
               _showChangePasswordDialog();
             },
           ),
           ListTile(
-            title: Text("Privacy Policy"),
-            trailing: Icon(Icons.description),
+            leading: Icon(Icons.privacy_tip, color: Colors.teal),
+            title: const Text("Privacy Policy"),
+            trailing: const Icon(Icons.arrow_forward_ios),
             onTap: () {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text('Privacy Policy'),
-                    content: SingleChildScrollView(
+                    title: const Text('Privacy Policy'),
+                    content: const SingleChildScrollView(
                       child: Text(
                         privacyPolicy,
                         // Add your terms and conditions text here
@@ -631,7 +740,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: Text('Close'),
+                        child: const Text('Close'),
                       ),
                     ],
                   );
@@ -640,15 +749,16 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
             },
           ),
           ListTile(
-            title: Text("Terms and Conditions"),
-            trailing: Icon(Icons.description),
+            leading: Icon(Icons.info, color: Colors.teal),
+            title: const Text("Terms and Conditions"),
+            trailing: const Icon(Icons.arrow_forward_ios),
             onTap: () {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text('Terms and Conditions'),
-                    content: SingleChildScrollView(
+                    title: const Text('Terms and Conditions'),
+                    content: const SingleChildScrollView(
                       child: Text(
                         termsAndConditions,
                       ),
@@ -658,7 +768,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: Text('Close'),
+                        child: const Text('Close'),
                       ),
                     ],
                   );
@@ -673,12 +783,14 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
 
   Widget _buildEmergencySection() {
     return Card(
+      elevation: 5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Column(
         children: [
           ListTile(
-            title: Text("Emergency Contacts"),
-            trailing: Icon(Icons.contacts),
+            leading: Icon(Icons.contacts, color: Colors.teal),
+            title: const Text("Emergency Contacts"),
+            trailing: const Icon(Icons.arrow_forward_ios),
             onTap: () {
               Navigator.push(
                 context,
@@ -688,17 +800,11 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
             },
           ),
           ListTile(
-            title: Text("SOS Button Settings"),
-            trailing: Icon(Icons.emergency),
+            leading: Icon(Icons.warning, color: Colors.teal),
+            title: const Text("SOS Button Settings"),
+            trailing: const Icon(Icons.arrow_forward_ios),
             onTap: () {
               // Handle SOS button settings
-            },
-          ),
-          ListTile(
-            title: Text("Hypoglycemia Alerts"),
-            trailing: Icon(Icons.warning),
-            onTap: () {
-              // Handle alerts configuration
             },
           ),
         ],
@@ -720,14 +826,27 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
             title: Text("Update $fieldName"),
             content: TextField(
               controller: fieldController,
-              decoration: InputDecoration(hintText: "Enter new $fieldName"),
+              decoration: InputDecoration(
+                hintText: "Enter new $fieldName",
+                hintStyle: TextStyle(color: Colors.grey),
+                filled: true,
+                fillColor: Colors.teal.withOpacity(0.1), // Background color
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.teal, width: 1.0),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.green, width: 1.0),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
             ),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text("Cancel"),
+                child: const Text("Cancel"),
               ),
               TextButton(
                 onPressed: () async {
@@ -737,7 +856,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                     Navigator.of(context).pop();
                   }
                 },
-                child: Text("Update"),
+                child: const Text("Update"),
               ),
             ],
           );
@@ -767,71 +886,166 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
     });
   }
 
-  void _showUpdateLanguageDialog() {
-    String selectedLanguage = _userProfile?['prefLanguage'] ?? 'English';
-    final localeProvider =
-        Provider.of<LocalizationService>(context, listen: false);
-
-    User? currentUser = FirebaseAuth.instance.currentUser;
-
-    if (currentUser == null) {
-      print("No user is logged in.");
-      return;
-    }
+  void _showNumberInputDialog(String fieldName, String currentValue) {
+    final TextEditingController fieldController =
+        TextEditingController(text: currentValue);
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Update Language Preferences"),
-          content: DropdownButton<String>(
-            value: selectedLanguage,
-            items: <String>['English', 'Arabic'].map((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-            onChanged: (String? newValue) {
-              setState(() {
-                selectedLanguage = newValue!;
-              });
-            },
+          title: Text("Update $fieldName"),
+          content: TextField(
+            controller: fieldController,
+            decoration: InputDecoration(
+              hintText: "Enter new phone number",
+              hintStyle: const TextStyle(color: Colors.grey),
+              filled: true,
+              fillColor: Colors.teal.withOpacity(0.1), // Background color
+              enabledBorder: OutlineInputBorder(
+                borderSide: const BorderSide(
+                    color: Colors.teal), // Border color when enabled
+                borderRadius: BorderRadius.circular(8),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: const BorderSide(
+                    color: Colors.green), // Border color when focused
+                borderRadius: BorderRadius.circular(8),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderSide: const BorderSide(
+                    color: Colors.red), // Border color for errors
+                borderRadius: BorderRadius.circular(8),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderSide: const BorderSide(
+                    color: Colors.redAccent), // Focused error border
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            keyboardType: TextInputType.phone, // Ensures only numbers are input
+            inputFormatters: [
+              FilteringTextInputFormatter
+                  .digitsOnly, // Restricts input to digits
+            ],
           ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text("Cancel"),
+              child: const Text("Cancel"),
             ),
             TextButton(
+              onPressed: () async {
+                final newValue = fieldController.text.trim();
+                if (newValue.isNotEmpty) {
+                  await _updateField(fieldName, newValue); // Update the field
+                  Navigator.of(context).pop();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text("Phone number cannot be empty.")),
+                  );
+                }
+              },
+              child: const Text("Update"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showUpdateLanguageDialog() {
+    String selectedLanguage = _userProfile?['prefLanguage'] ?? 'English';
+    final localeProvider =
+        Provider.of<LocalizationService>(context, listen: false);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: const Text(
+            "Update Language Preferences",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                "Choose your preferred language from the dropdown below.",
+                style: TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: selectedLanguage,
+                items: <String>['English', 'Arabic'].map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(
+                      value,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedLanguage = newValue!;
+                  });
+                },
+                decoration: InputDecoration(
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Colors.teal),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Colors.green),
+                  ),
+                ),
+                dropdownColor: Colors.teal[50],
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                "Cancel",
+                style:
+                    TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.teal,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
               onPressed: () async {
                 if (selectedLanguage.isNotEmpty) {
                   await _updateField('prefLanguage', selectedLanguage);
                   if (selectedLanguage == 'English') {
-                    await FirebaseFirestore.instance
-                        .collection(
-                            'Users') // Adjust the collection name if necessary
-                        .doc(currentUser?.uid)
-                        .update({
-                      'prefLanguage': 'English',
-                    });
-                    localeProvider.setLocale(Locale('en', 'US'));
+                    localeProvider.setLocale(const Locale('en', 'US'));
                   } else if (selectedLanguage == 'Arabic') {
-                    await FirebaseFirestore.instance
-                        .collection(
-                            'Users') // Adjust the collection name if necessary
-                        .doc(currentUser?.uid)
-                        .update({
-                      'prefLanguage': 'Arabic',
-                    });
-                    localeProvider.setLocale(Locale('ar', 'AE'));
+                    localeProvider.setLocale(const Locale('ar', 'AE'));
                   }
                   Navigator.of(context).pop();
                 }
               },
-              child: Text("Update"),
+              child: const Text(
+                "Update",
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ],
         );
