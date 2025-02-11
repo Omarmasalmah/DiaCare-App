@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diabetes/pages/DiabetesYogaListPage.dart';
+import 'package:diabetes/pages/DoctorFeeds.dart';
 import 'package:diabetes/pages/ReadingsEntry.dart';
 import 'package:diabetes/pages/UserListPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,12 +15,13 @@ import 'package:diabetes/NotificationService.dart';
 import 'package:diabetes/pages/custom_chart_page.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class HomeScreen extends StatefulWidget {
   // final double glucoseAverage = 120.0; // Replace with your calculated average
   final double burnedCalories = 1500.0;
   final double earnedCalories = 1800.0;
-  final int stepsWalked = 10000;
+  final int stepsWalked = 0;
   final double someOtherValue = 75.0;
   const HomeScreen({super.key});
 
@@ -40,9 +42,19 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    requestActivityPermission();
     _startStepCounting();
     _fetchChartData(); // Fetch chart data from Firebase
     _fetchAverageAndA1C(); // Fetch glucose average and A1C
+  }
+
+  Future<void> requestActivityPermission() async {
+    var status = await Permission.activityRecognition.request();
+    if (status.isDenied) {
+      print("❌ Permission denied.");
+    } else if (status.isGranted) {
+      print("✅ Permission granted.");
+    }
   }
 
   Future<void> _fetchAverageAndA1C() async {
@@ -222,7 +234,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             DailyGlucoseCard(timelineData: timelineData), // Pass data here
             HealthDashboardWidget(
-              glucoseAverage: glucoseAverage ?? 0.0,
+              glucoseAverage: a1c ?? 0.0,
               burnedCalories: widget.burnedCalories,
               earnedCalories: widget.earnedCalories,
               stepsWalked: _steps,
@@ -304,7 +316,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
               IconButton(
-                icon: const Icon(Icons.add, color: Colors.white, size: 34),
+                icon: const Icon(Icons.location_pin,
+                    color: Colors.white, size: 34),
                 onPressed: () {
                   // Navigate to the home screen
                   Navigator.push(
@@ -501,29 +514,45 @@ class ActivitySummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Activity Summary',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildActivityItem(Icons.directions_walk, 'Steps', steps),
-                _buildActivityItem(Icons.fitness_center, 'Exercise', exercise),
-                _buildActivityItem(
-                    Icons.local_fire_department, 'Calories', calories),
-              ],
-            ),
-          ],
+    return InkWell(
+      onTap: () {
+        // Define the action to perform when the card is clicked
+        print("Doctor Feeds card tapped!");
+        // You can also navigate to another screen
+        // Navigator.push(context, MaterialPageRoute(builder: (context) => NewScreen()));
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  DoctorFeeds()), // Replace NewScreen with your actual screen widget
+        );
+      },
+      borderRadius:
+          BorderRadius.circular(10), // Optional: To match Card border radius
+      child: Card(
+        elevation: 3,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Doctor Feeds',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              // Uncomment if you want activity items
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     _buildActivityItem(Icons.directions_walk, 'Steps', steps),
+              //     _buildActivityItem(Icons.fitness_center, 'Exercise', exercise),
+              //     _buildActivityItem(Icons.local_fire_department, 'Calories', calories),
+              //   ],
+              // ),
+            ],
+          ),
         ),
       ),
     );

@@ -262,9 +262,11 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
   Future<void> _pickPhoto() async {
     final XFile? pickedImage =
         await _picker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      _image = pickedImage;
-    });
+    if (pickedImage != null) {
+      setState(() {
+        _image = File(pickedImage.path) as XFile?;
+      });
+    }
   }
 
   // Pick a video

@@ -75,7 +75,7 @@ class HealthDashboardWidget extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "${glucoseAverage.toStringAsFixed(1)}\nmg/dL",
+                            "${glucoseAverage.toStringAsFixed(1)}",
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: 18,
@@ -90,7 +90,7 @@ class HealthDashboardWidget extends StatelessWidget {
                     Positioned(
                       bottom: 10,
                       child: const Text(
-                        "Glucose Average",
+                        "Glucose HbA1c %",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

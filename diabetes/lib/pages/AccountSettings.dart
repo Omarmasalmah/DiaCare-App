@@ -686,31 +686,31 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Column(
         children: [
-          SwitchListTile(
-            title: const Text("Enable Fingerprint Authentication"),
-            value: fingerprintEnabled,
-            onChanged: (value) async {
-              bool authenticated = await _authenticateWithFingerprint();
-              if (authenticated) {
-                setState(() {
-                  fingerprintEnabled = value;
-                });
-                await _saveFingerprintPreference(value);
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Authentication failed.")),
-                );
-              }
-            },
-            activeColor: const Color.fromARGB(
-                255, 2, 150, 0), // Thumb color when the switch is ON
-            activeTrackColor: const Color.fromARGB(255, 45, 221, 0)
-                .withOpacity(0.5), // Track color when the switch is ON
-            inactiveThumbColor:
-                Colors.grey, // Thumb color when the switch is OFF
-            inactiveTrackColor: Colors.grey
-                .withOpacity(0.5), // Track color when the switch is OFF
-          ),
+          // SwitchListTile(
+          //   title: const Text("Enable Fingerprint Authentication"),
+          //   value: fingerprintEnabled,
+          //   onChanged: (value) async {
+          //     bool authenticated = await _authenticateWithFingerprint();
+          //     if (authenticated) {
+          //       setState(() {
+          //         fingerprintEnabled = value;
+          //       });
+          //       await _saveFingerprintPreference(value);
+          //     } else {
+          //       ScaffoldMessenger.of(context).showSnackBar(
+          //         const SnackBar(content: Text("Authentication failed.")),
+          //       );
+          //     }
+          //   },
+          //   activeColor: const Color.fromARGB(
+          //       255, 2, 150, 0), // Thumb color when the switch is ON
+          //   activeTrackColor: const Color.fromARGB(255, 45, 221, 0)
+          //       .withOpacity(0.5), // Track color when the switch is ON
+          //   inactiveThumbColor:
+          //       Colors.grey, // Thumb color when the switch is OFF
+          //   inactiveTrackColor: Colors.grey
+          //       .withOpacity(0.5), // Track color when the switch is OFF
+          // ),
           ListTile(
             leading: Icon(Icons.lock, color: Colors.teal),
             title: const Text("Change Password"),

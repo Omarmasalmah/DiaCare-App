@@ -379,7 +379,7 @@ class _MainInfoPageState extends State<MainInfoPage> {
             ),
             const SizedBox(height: 16),
             _buildDropdown('Diabetes Type', selectedDiabetesType,
-                ['Pre', 'Type I', 'Type II'], (String? newValue) {
+                ['Pre', 'Type I', 'Type II', 'None'], (String? newValue) {
               setState(() {
                 selectedDiabetesType = newValue!;
               });

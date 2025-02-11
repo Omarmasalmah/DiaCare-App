@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:diabetes/Cloudinary.dart';
 import 'package:diabetes/constants.dart';
 import 'package:diabetes/models/message.dart';
 import 'package:file_picker/file_picker.dart';
@@ -28,6 +29,7 @@ class _ChatPageState extends State<ChatPage> {
   String recipientProfileImageUrl = '';
 
   String? conversationId;
+  File? selectedFile;
 
   final currentUser = FirebaseAuth.instance.currentUser?.email;
 
@@ -73,48 +75,55 @@ class _ChatPageState extends State<ChatPage> {
     super.dispose();
   }
 
-  // Future<void> _pickImage() async {
-  //   final ImagePicker picker = ImagePicker();
-  //   final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+  Future<void> pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
-  //   if (image != null) {
-  //     File imageFile = File(image.path);
-  //     _uploadFile(imageFile, 'image');
-  //   }
-  // }
+    if (image != null) {
+      selectedFile = File(image.path);
+      await uploadFile();
+    }
+  }
 
-  // Future<void> _pickFile() async {
-  //   FilePickerResult? result = await FilePicker.platform.pickFiles();
+  Future<void> pickFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
 
-  //   if (result != null) {
-  //     File file = File(result.files.single.path!);
-  //     _uploadFile(file, 'file');
-  //   }
-  // }
+    if (result != null && result.files.single.path != null) {
+      selectedFile = File(result.files.single.path!);
+      await uploadFile();
+    }
+  }
 
-  // Future<void> _uploadFile(File file, String type) async {
-  //   try {
-  //     String fileName =
-  //         '${DateTime.now().millisecondsSinceEpoch}_${file.path.split('/').last}';
-  //     Reference ref = FirebaseStorage.instance.ref().child('uploads/$fileName');
+  Future<void> uploadFile() async {
+    if (selectedFile == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('No file selected')),
+      );
+      return;
+    }
 
-  //     await ref.putFile(file);
-  //     String downloadUrl = await ref.getDownloadURL();
+    try {
+      String fileType = selectedFile!.path.endsWith('.jpg') ||
+              selectedFile!.path.endsWith('.png')
+          ? 'image'
+          : 'raw';
+      String? uploadUrl =
+          await CloudinaryService.uploadFile(selectedFile!, fileType);
 
-  //     await messages.add({
-  //       'message': downloadUrl,
-  //       'type': type, // Indicate the type of message
-  //       'createdAt': DateTime.now(),
-  //       'senderId': currentUser,
-  //       'receiverId': recipientEmail,
-  //       'conversationId': conversationId,
-  //     });
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Failed to upload file: $e')),
-  //     );
-  //   }
-  // }
+      if (uploadUrl != null) {
+        controller.text = uploadUrl; // Display the file URL in the text field
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('File uploaded successfully!')),
+        );
+      } else {
+        throw Exception('Upload failed');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to upload file: $e')),
+      );
+    }
+  }
 
   void _sendMessage(String data) async {
     if (data.trim().isEmpty) return;
@@ -271,7 +280,8 @@ class _ChatPageState extends State<ChatPage> {
             child: IconButton(
               icon: const Icon(Icons.photo, color: Colors.teal),
               onPressed: () {
-                print("Pick image");
+                //print("Pick image");
+                pickImage();
               },
             ),
           ),
@@ -282,7 +292,8 @@ class _ChatPageState extends State<ChatPage> {
             child: IconButton(
               icon: const Icon(Icons.attach_file, color: Colors.teal),
               onPressed: () {
-                print("Pick file");
+                //print("Pick file");
+                pickFile();
               }, //_pickFile,
             ),
           ),

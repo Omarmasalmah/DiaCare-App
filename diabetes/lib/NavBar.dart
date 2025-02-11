@@ -2,6 +2,7 @@ import 'package:diabetes/generated/l10n.dart';
 import 'package:diabetes/pages/DiabetesYogaListPage.dart';
 import 'package:diabetes/pages/DoctorHomePage.dart';
 import 'package:diabetes/pages/LocaleProvider.dart';
+import 'package:diabetes/pages/SugesstedFoods.dart';
 import 'package:diabetes/pages/UserListPage.dart';
 import 'package:diabetes/pages/chatPage.dart';
 import 'package:diabetes/pages/custom_chart_page.dart';
@@ -178,6 +179,18 @@ class _NavBarState extends State<NavBar> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => const DiabetesFAQPage()),
+              );
+            },
+          ),
+          ListTile(
+            title: Text('Suggested Foods'),
+            leading: const Icon(Icons.food_bank),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        HealthyMealsPage()), // Navigate to UserListPage
               );
             },
           ),
