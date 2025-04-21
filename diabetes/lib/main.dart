@@ -1,11 +1,25 @@
+import 'dart:async';
+
 import 'package:diabetes/firebase_options.dart';
 import 'package:diabetes/generated/l10n.dart';
+import 'package:diabetes/pages/DoctorHomePage.dart';
+import 'package:diabetes/pages/LocaleProvider.dart';
+import 'package:diabetes/pages/chatPage.dart';
+import 'package:diabetes/pages/home_screen.dart';
+import 'package:diabetes/pages/OnBoardingScreen.dart';
+
 //import 'package:diabetes/pages/home_screen.dart';
 import 'package:diabetes/pages/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+import 'package:diabetes/NotificationService.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +36,72 @@ void main() async {
     print("Firebase is not connected. Error: $e");
   }
 
-  runApp(const MyApp());
+  tz.initializeTimeZones();
+  await initializeNotifications();
+
+  await requestNotificationPermission();
+
+  final notificationService = NotificationService();
+  notificationService.scheduleDailyReminders();
+
+// Schedule notifications every 10 seconds automatically
+  //print("Current time1: ${DateTime.now()}");
+
+  Timer.periodic(const Duration(seconds: 5), (timer) {
+    //print("Current time2: ${DateTime.now()}");
+    final now = DateTime.now();
+    /*   NotificationService.scheduleNotification(
+      id: timer.tick, // Unique ID for each notification
+      title: 'Automatic Reminder',
+      body: 'This is a recurring notification sent every 10 seconds.',
+      scheduledTime: now.add(const Duration(seconds: 10)),
+    );*/
+    //print("Current time3: ${DateTime.now()}");
+
+    ///////////////////////////////////////////////////
+    notificationService.scheduleDailyReminders();
+
+    /* NotificationService.showDailyReminder(
+    'Time to take your medication!',
+    1,
+    DateTime(now.year, now.month, now.day, 18, 15), // 8:00 PM
+
+  );*/
+  });
+
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => LocalizationService(),
+      child: MyApp(),
+    ),
+  );
+}
+
+Future<void> initializeNotifications() async {
+  const AndroidInitializationSettings androidInitializationSettings =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  const InitializationSettings initializationSettings = InitializationSettings(
+    android: androidInitializationSettings,
+  );
+
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+    onDidReceiveNotificationResponse: (NotificationResponse response) {
+      print("Notification Clicked: ${response.payload}");
+    },
+  );
+}
+
+Future<void> requestNotificationPermission() async {
+  final NotificationAppLaunchDetails? details =
+      await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+
+  final AndroidFlutterLocalNotificationsPlugin? androidPlugin =
+      flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>();
+
+  await androidPlugin?.requestPermission();
 }
 
 class MyApp extends StatelessWidget {
@@ -31,15 +110,22 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final localeProvider = Provider.of<LocalizationService>(context);
+    print(localeProvider.locale);
     return MaterialApp(
-      locale: const Locale('en'),
-      localizationsDelegates: [
+      //locale: const Locale('ar'),
+      locale: localeProvider.locale,
+      supportedLocales: const [
+        Locale('en'), // English
+        Locale('ar'), // Arabic
+      ],
+      localizationsDelegates: const [
         S.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: S.delegate.supportedLocales,
+      //supportedLocales: S.delegate.supportedLocales,
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -47,7 +133,19 @@ class MyApp extends StatelessWidget {
         appBarTheme: const AppBarTheme(backgroundColor: Colors.transparent),
         //  fontFamily: regular,
       ),
-      home: LogIn(),
+      routes: {
+        //'/': (context) => HomeScreen(),
+        ChatPage.id: (context) => ChatPage(),
+      },
+      // initialRoute: '/',
+      // routes: {
+      //   '/': (context) => OnboardingScreen(),
+      //   '/login': (context) => LogIn(),
+      //   '/home': (context) => HomeScreen(),
+      // },
+      //home: LogIn(),
+      home: OnboardingScreen(),
+      //home: DoctorHomePage(),
     );
   }
 }

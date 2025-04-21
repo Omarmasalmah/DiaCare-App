@@ -1,1 +1,41 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"diabetes-a33a3","appId":"1:325798970573:android:c88404d571da839040d584","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"diabetes-a33a3","configurations":{"android":"1:325798970573:android:c88404d571da839040d584","ios":"1:325798970573:ios:b49ad9e986ae8de240d584","macos":"1:325798970573:ios:b49ad9e986ae8de240d584","web":"1:325798970573:web:d5376e6db51eaac840d584","windows":"1:325798970573:web:e7823b09fa81f92740d584"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "diabetes-a33a3",
+          "appId": "1:325798970573:android:c88404d571da839040d584",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "diabetes-a33a3",
+          "configurations": {
+            "android": "1:325798970573:android:c88404d571da839040d584",
+            "ios": "1:325798970573:ios:b49ad9e986ae8de240d584",
+            "macos": "1:325798970573:ios:b49ad9e986ae8de240d584",
+            "web": "1:325798970573:web:d5376e6db51eaac840d584",
+            "windows": "1:325798970573:web:e7823b09fa81f92740d584"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ]
+    }
+  ]
+}

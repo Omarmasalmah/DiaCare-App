@@ -1,111 +1,200 @@
-import 'package:diabetes/pages/RoleSelectionPage.dart';
-import 'package:diabetes/pages/login.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:diabetes/pages/RoleSelectionPage.dart'; // Import your RoleSelectionPage
 
-class PhoneNumberPage extends StatelessWidget {
-  final TextEditingController controller = TextEditingController();
-  var phoneNumber = '';
+class PhoneNumberPage extends StatefulWidget {
+  const PhoneNumberPage({super.key});
+
+  @override
+  State<PhoneNumberPage> createState() => _PhoneNumberPageState();
+}
+
+class _PhoneNumberPageState extends State<PhoneNumberPage> {
+  final TextEditingController _controller = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  String phoneNumber = '';
+  String nationalNumber = '';
+  bool isValidNumber = true;
+
+  @override
+  void initState() {
+    super.initState();
+    // Apply input formatters to restrict to 9 digits and numeric input
+    _controller.addListener(() {
+      final text = _controller.text;
+      if (text.length > 9) {
+        _controller.text = text.substring(0, 9); // Trim extra digits
+        _controller.selection = TextSelection.fromPosition(
+          TextPosition(offset: _controller.text.length),
+        );
+      }
+    });
+  }
+
+  void validatePhoneNumber() {
+    if (_formKey.currentState?.validate() ?? false) {
+      setState(() {
+        isValidNumber = true;
+      });
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RoleSelectionPage(phoneNumber: phoneNumber),
+        ),
+      );
+    } else {
+      setState(() {
+        isValidNumber = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+        title: const Text(
+          "Enter Phone Number",
+          style: TextStyle(color: Colors.white, fontSize: 24),
         ),
-        title: Text("Enter Phone Number"),
-        backgroundColor: Colors.teal,
+        centerTitle: true,
+        elevation: 4,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.teal, Color.fromARGB(255, 41, 175, 45)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                "Please enter your phone number to get started",
-                style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 16),
-              // Phone Number Input with Country Code
-              InternationalPhoneNumberInput(
-                onInputChanged: (PhoneNumber number) {
-                  print(number.phoneNumber); // Access the complete number here
-                  phoneNumber = number.phoneNumber!;
-                },
-                selectorConfig: SelectorConfig(
-                  selectorType: PhoneInputSelectorType.DROPDOWN,
-                ),
-                ignoreBlank: false,
-                autoValidateMode: AutovalidateMode.disabled,
-                selectorTextStyle: TextStyle(color: Colors.black),
-                textFieldController: controller,
-                formatInput: false,
-                keyboardType: TextInputType.numberWithOptions(
-                  signed: true,
-                  decimal: true,
-                ),
-                inputDecoration: InputDecoration(
-                  labelText: "Phone Number",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(height: 24),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-                ),
-                child: Text(
-                  "Continue",
-                  style: TextStyle(fontSize: 16),
-                ),
-                onPressed: () {
-                  // final phoneNumber = controller.text.trim();
-                  print('phone number is $phoneNumber');
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              RoleSelectionPage(phoneNumber: phoneNumber)));
-                },
-              ),
-              SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    "Already have an account?",
-                    style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                  const Icon(
+                    Icons.phone_android,
+                    size: 80,
+                    color: Colors.teal,
                   ),
-                  TextButton(
-                    onPressed: () {
-                      // Navigate to the sign-in page
-                      print("Sign in button pressed");
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => LogIn()),
-                      );
-                    },
-                    child: Text(
-                      "Sign in",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.teal,
-                        fontWeight: FontWeight.bold,
+                  const SizedBox(height: 16),
+                  Text(
+                    "Please enter your phone number to get started",
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.grey[700],
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+                  // Phone Number Input
+                  Card(
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: InternationalPhoneNumberInput(
+                        onInputChanged: (PhoneNumber number) async {
+                          phoneNumber = number.phoneNumber!;
+                          nationalNumber = number.parseNumber();
+                        },
+                        selectorConfig: const SelectorConfig(
+                          selectorType: PhoneInputSelectorType.DROPDOWN,
+                        ),
+                        ignoreBlank: false,
+                        autoValidateMode: AutovalidateMode.disabled,
+                        selectorTextStyle: const TextStyle(color: Colors.black),
+                        textFieldController: _controller,
+                        formatInput: false,
+                        keyboardType: const TextInputType.numberWithOptions(
+                          signed: true,
+                          decimal: false,
+                        ),
+                        inputDecoration: const InputDecoration(
+                          labelText: "Phone Number",
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                        ),
+                        validator: (value) {
+                          if (value == null ||
+                              value.isEmpty ||
+                              nationalNumber.isEmpty) {
+                            return 'Please enter a phone number.';
+                          }
+                          // Validate if the national number is exactly 9 digits
+                          if (nationalNumber.length != 9) {
+                            return 'Please enter a valid phone number.';
+                          }
+                          return null;
+                        },
                       ),
                     ),
                   ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 50, vertical: 15),
+                      elevation: 6,
+                    ),
+                    child: const Text(
+                      "Continue",
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                    onPressed: validatePhoneNumber,
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Already have an account?",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text(
+                          "Sign in",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.teal,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
       ),
