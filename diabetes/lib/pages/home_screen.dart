@@ -16,11 +16,15 @@ import 'package:diabetes/pages/custom_chart_page.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:diabetes/pages/Google_map.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:video_player/video_player.dart';
 
 class HomeScreen extends StatefulWidget {
   // final double glucoseAverage = 120.0; // Replace with your calculated average
-  final double burnedCalories = 1500.0;
-  final double earnedCalories = 1800.0;
+  final double burnedCalories = 822;
+  final double earnedCalories = 1635;
   final int stepsWalked = 0;
   final double someOtherValue = 75.0;
   const HomeScreen({super.key});
@@ -182,6 +186,56 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  void _sendSOS(BuildContext context) async {
+    final BuildContext rootContext =
+        context; // Store a stable context reference
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      ScaffoldMessenger.of(rootContext).showSnackBar(
+        const SnackBar(content: Text("User not logged in")),
+      );
+      return;
+    }
+
+    try {
+      QuerySnapshot contactsSnapshot = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(user.uid)
+          .collection('contacts')
+          .get();
+
+      List<String> emailList =
+          contactsSnapshot.docs.map((doc) => doc['contact'] as String).toList();
+
+      if (emailList.isEmpty) {
+        ScaffoldMessenger.of(rootContext).showSnackBar(
+          const SnackBar(content: Text("No emergency contacts found!")),
+        );
+        return;
+      }
+
+      final Email email = Email(
+        body:
+            "🚨 SOS Alert! 🚨\n\nThis is an emergency alert from your contact.",
+        subject: "🚨 EMERGENCY ALERT 🚨",
+        recipients: emailList,
+        isHTML: false,
+      );
+
+      await FlutterEmailSender.send(email);
+
+      ScaffoldMessenger.of(rootContext).showSnackBar(
+        const SnackBar(content: Text("SOS Alert Sent Successfully!")),
+      );
+    } catch (e) {
+      print("Error sending SOS: $e");
+      // ScaffoldMessenger.of(rootContext).showSnackBar(
+      //   SnackBar(content: Text("Error sending SOS: $e")),
+      // );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Call daily reminders and user activity monitoring when the home screen loads
@@ -265,12 +319,22 @@ class _HomeScreenState extends State<HomeScreen> {
             builder: (BuildContext context) {
               return AlertDialog(
                 title: const Text("SOS"),
-                content: const Text("SOS button pressed!"),
+                content:
+                    const Text("Are you sure you want to send an SOS alert?"),
                 actions: <Widget>[
                   TextButton(
-                    child: const Text("OK"),
+                    child: const Text("Cancel"),
                     onPressed: () {
                       Navigator.of(context).pop();
+                    },
+                  ),
+                  ElevatedButton(
+                    child: const Text("Send SOS"),
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Close dialog
+                      _sendSOS(context); // Call function to send SOS
                     },
                   ),
                 ],
@@ -311,7 +375,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            const HomeScreen()), // Replace ReadingsEntry with your actual readings entry screen widget
+                            const DoctorFeeds()), // Replace ReadingsEntry with your actual readings entry screen widget
                   );
                 },
               ),
@@ -324,7 +388,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            DiabetesPage()), // Replace HomeScreen with your actual home screen widget
+                            GoogleMaps()), // Replace HomeScreen with your actual home screen widget
                   );
                 },
               ),
@@ -512,23 +576,61 @@ class ActivitySummaryCard extends StatelessWidget {
     required this.calories,
   });
 
+  Future<VideoPlayerController?> _initializeVideo(String videoUrl) async {
+    try {
+      VideoPlayerController videoController =
+          VideoPlayerController.network(videoUrl);
+      await videoController.initialize();
+      return videoController;
+    } catch (e) {
+      print("Error initializing video: $e");
+      return null;
+    }
+  }
+
+  Future<void> _openDocument(String filePath) async {
+    final Uri uri = Uri.parse(filePath); // Convert to URI
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      print("Could not open file: $filePath");
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   const SnackBar(content: Text("Could not open document.")),
+      // );
+    }
+  }
+
+  Future<String> _fetchDoctorName(String? userId) async {
+    if (userId == null) return "Unknown Doctor"; // Handle missing userId
+
+    try {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('Users') // Replace with your users collection name
+          .doc(userId)
+          .get();
+
+      if (userDoc.exists) {
+        return userDoc['name'] ??
+            "Doctor Name Missing"; // Return the doctor’s name
+      } else {
+        return "Doctor Not Found"; // Handle case if user doesn't exist
+      }
+    } catch (e) {
+      print("Error fetching doctor name: $e");
+      return "Error Fetching Name"; // Return error message if fetching fails
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // Define the action to perform when the card is clicked
-        print("Doctor Feeds card tapped!");
-        // You can also navigate to another screen
-        // Navigator.push(context, MaterialPageRoute(builder: (context) => NewScreen()));
         Navigator.push(
           context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  DoctorFeeds()), // Replace NewScreen with your actual screen widget
+          MaterialPageRoute(builder: (context) => DoctorFeeds()),
         );
       },
-      borderRadius:
-          BorderRadius.circular(10), // Optional: To match Card border radius
+      borderRadius: BorderRadius.circular(10),
       child: Card(
         elevation: 3,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -542,15 +644,142 @@ class ActivitySummaryCard extends StatelessWidget {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
-              // Uncomment if you want activity items
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //   children: [
-              //     _buildActivityItem(Icons.directions_walk, 'Steps', steps),
-              //     _buildActivityItem(Icons.fitness_center, 'Exercise', exercise),
-              //     _buildActivityItem(Icons.local_fire_department, 'Calories', calories),
-              //   ],
-              // ),
+              StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('posts')
+                    .orderBy('createdAt', descending: true) // Get latest post
+                    .limit(1) // Fetch only one post
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError) {
+                    return Center(
+                        child: Text("Error loading feed: ${snapshot.error}"));
+                  }
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Text("No recent posts available.",
+                        style: TextStyle(fontSize: 14, color: Colors.grey));
+                  }
+
+                  final latestPost =
+                      snapshot.data!.docs.first.data() as Map<String, dynamic>;
+                  final String postText = latestPost['text'] ?? 'No content';
+                  final String? imageUrl = latestPost['image'];
+                  final String? videoUrl = latestPost['video'];
+                  final String? documentUrl = latestPost['document'];
+                  final String userId = latestPost['userId'];
+
+                  return FutureBuilder<String>(
+                    future: _fetchDoctorName(userId), // Fetch doctor's name
+                    builder: (context, nameSnapshot) {
+                      String doctorName = nameSnapshot.data ?? "Unknown Doctor";
+
+                      return Card(
+                        elevation: 5,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 10),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Doctor's Name & Profile
+                              Row(
+                                children: [
+                                  CircleAvatar(
+                                    backgroundColor: Colors.blueAccent,
+                                    child: Text(
+                                      doctorName[
+                                          0], // First letter of the doctor's name
+                                      style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    "Dr. $doctorName",
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+
+                              // Post Content
+                              Text(
+                                postText,
+                                style: const TextStyle(fontSize: 16),
+                              ),
+
+                              // Display Image if Available
+                              if (imageUrl != null && imageUrl.isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 10),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.network(imageUrl,
+                                        height: 180,
+                                        width: double.infinity,
+                                        fit: BoxFit.cover),
+                                  ),
+                                ),
+
+                              // Display Video if Available
+                              if (videoUrl != null && videoUrl.isNotEmpty)
+                                FutureBuilder<VideoPlayerController?>(
+                                  future: _initializeVideo(videoUrl),
+                                  builder: (context, videoSnapshot) {
+                                    if (videoSnapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                          child: CircularProgressIndicator());
+                                    }
+                                    if (!videoSnapshot.hasData ||
+                                        videoSnapshot.data == null) {
+                                      return const Text("Error loading video");
+                                    }
+                                    VideoPlayerController videoController =
+                                        videoSnapshot.data!;
+                                    return Column(
+                                      children: [
+                                        AspectRatio(
+                                          aspectRatio:
+                                              videoController.value.aspectRatio,
+                                          child: VideoPlayer(videoController),
+                                        ),
+                                        VideoProgressIndicator(videoController,
+                                            allowScrubbing: true),
+                                      ],
+                                    );
+                                  },
+                                ),
+
+                              // Display Document if Available
+                              if (documentUrl != null && documentUrl.isNotEmpty)
+                                ListTile(
+                                  leading: const Icon(Icons.insert_drive_file,
+                                      color: Colors.orange),
+                                  title: Text(
+                                    documentUrl.split('/').last,
+                                    style: const TextStyle(color: Colors.blue),
+                                  ),
+                                  onTap: () => _openDocument(documentUrl),
+                                ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
             ],
           ),
         ),
@@ -598,7 +827,12 @@ class MealLogSection extends StatelessWidget {
           children: [
             const Text(
               'Recent Meal Log',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Roboto',
+                color: Colors.black87,
+              ),
             ),
             const SizedBox(height: 16),
             StreamBuilder<QuerySnapshot>(
@@ -618,27 +852,77 @@ class MealLogSection extends StatelessWidget {
                       child: Text("Error loading meals: ${snapshot.error}"));
                 }
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(child: Text("No meals logged yet"));
+                  return const Center(
+                      child: Text("No meals logged yet",
+                          style: TextStyle(fontSize: 16, color: Colors.grey)));
                 }
 
-                final meals = snapshot.data!.docs.map((doc) {
-                  final data = doc.data() as Map<String, dynamic>;
-                  final meal = data['selectedFoods']?.toString() ?? 'Unknown';
-                  final calories = data['caloriesValue'] != null
-                      ? '${data['caloriesValue']}'
-                      : 'Unknown';
-                  final time = data['timestamp'] != null
-                      ? (data['timestamp'] as Timestamp)
-                          .toDate()
-                          .toLocal()
-                          .toString()
-                      : 'Unknown';
-                  return Text(
-                      'Meal: $meal\nCalories: $calories\nTime: $time\n');
-                }).toList();
-
                 return Column(
-                  children: meals,
+                  children: snapshot.data!.docs.map((doc) {
+                    final data = doc.data() as Map<String, dynamic>;
+                    final meal = data['selectedFoods']?.toString() ?? 'Unknown';
+                    final calories =
+                        data['caloriesValue']?.toString() ?? 'Unknown';
+                    final time = data['timestamp'] != null
+                        ? (data['timestamp'] as Timestamp)
+                            .toDate()
+                            .toLocal()
+                            .toString()
+                        : 'Unknown';
+
+                    return Card(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      elevation: 3,
+                      margin: const EdgeInsets.symmetric(vertical: 6),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              meal,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.teal,
+                                fontFamily: 'Roboto',
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Calories: $calories",
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: 'Roboto',
+                                  ),
+                                ),
+                                Expanded(
+                                  // ✅ Prevents overflow
+                                  child: Text(
+                                    time,
+                                    textAlign:
+                                        TextAlign.right, // Aligns text to right
+                                    overflow: TextOverflow
+                                        .ellipsis, // ✅ Prevents overflow
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey,
+                                      fontFamily: 'Roboto',
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
                 );
               },
             ),

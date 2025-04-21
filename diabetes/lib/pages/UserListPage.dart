@@ -1,7 +1,8 @@
+import 'package:diabetes/pages/ReportPage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'chatPage.dart'; // Import the ChatPage
+import 'chatPage.dart';
 
 class UserListPage extends StatefulWidget {
   const UserListPage({super.key});
@@ -43,13 +44,10 @@ class _UserListPageState extends State<UserListPage> {
   Widget build(BuildContext context) {
     if (currentUserRole == null) {
       return const Scaffold(
-        body: Center(
-            child:
-                CircularProgressIndicator()), // Show loading while fetching user role
+        body: Center(child: CircularProgressIndicator()),
       );
     }
 
-    // Determine which users to display based on the current user's role
     String targetRole = (currentUserRole == 'patient') ? 'doctor' : 'patient';
 
     return Scaffold(
@@ -80,8 +78,7 @@ class _UserListPageState extends State<UserListPage> {
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('Users')
-            .where('role',
-                isEqualTo: targetRole) // Fetch only users with opposite role
+            .where('role', isEqualTo: targetRole)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -113,6 +110,7 @@ class _UserListPageState extends State<UserListPage> {
               itemCount: userList.length,
               itemBuilder: (context, index) {
                 var user = userList[index];
+                String userId = user.id; // Get the document ID (userId)
                 String userName = user['name'] ?? 'No Name';
                 String userEmail = user['email'] ?? 'No Email';
                 String? profileImageUrl = user['profileImage'];
@@ -136,7 +134,8 @@ class _UserListPageState extends State<UserListPage> {
                             : null,
                         child: (profileImageUrl == null ||
                                 profileImageUrl.isEmpty ||
-                                profileImageUrl == 'images/NoProfilePic.png')
+                                user['profileImage'] ==
+                                    'images/NoProfilePic.png')
                             ? Center(
                                 child: Text(
                                   _getInitials(userName),
@@ -162,6 +161,17 @@ class _UserListPageState extends State<UserListPage> {
                         style:
                             const TextStyle(fontSize: 14, color: Colors.grey),
                       ),
+                      trailing: currentUserRole == 'doctor'
+                          ? IconButton(
+                              icon: const Icon(Icons.description,
+                                  color: Colors.teal),
+                              tooltip: "Generate Report",
+                              onPressed: () {
+                                _generatePatientReport(
+                                    userId, userName, userEmail);
+                              },
+                            )
+                          : null,
                       onTap: () {
                         Navigator.pushNamed(
                           context,
@@ -201,4 +211,44 @@ class _UserListPageState extends State<UserListPage> {
     }
     return '?'; // Fallback for empty names
   }
+
+  // Function to generate a report for the selected patient
+  void _generatePatientReport(
+      String userId, String userName, String userEmail) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ReportPage(
+          userId: userId,
+          userName: userName,
+          userEmail: userEmail,
+        ),
+      ),
+    );
+  }
 }
+
+// // Placeholder for the report page
+// class ReportPage extends StatelessWidget {
+//   final String userId;
+//   final String userName;
+//   final String userEmail;
+
+//   const ReportPage({
+//     super.key,
+//     required this.userId,
+//     required this.userName,
+//     required this.userEmail,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Colors.white,
+//       appBar: AppBar(title: Text("Patient Report: $userName")),
+//       body: Center(
+//         child: Text("Report generation for $userName ($userEmail)"),
+//       ),
+//     );
+//   }
+// }

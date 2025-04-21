@@ -66,14 +66,15 @@ class DiabetesFAQPageState extends State<DiabetesFAQPage> {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          'أسئلة شائعة عن السكري',
+          'Diabetes FAQ',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 24,
+            color: Colors.white,
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: const Color.fromARGB(255, 23, 167, 42),
       ),
       body: SingleChildScrollView(
         child: Padding(

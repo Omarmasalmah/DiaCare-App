@@ -46,6 +46,8 @@ dependencies:
   flutter_svg: ^1.1.0
   flutter_map_location_marker: ^8.0.5
   permission_handler: ^10.2.0
+  syncfusion_flutter_gauges: ^20.4.38
+  flutter_email_sender: ^7.0.0
 
   
 
@@ -59,12 +61,19 @@ dev_dependencies:
   flutter_lints: ^4.0.0
   intl_utils: ^2.0.0
 
+
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app_icon.png"
+  adaptive_icon_background: "#ffffff"
+
 flutter:
   uses-material-design: true
   generate: true
   
-  
-  
+ 
 
   assets:
     - images/

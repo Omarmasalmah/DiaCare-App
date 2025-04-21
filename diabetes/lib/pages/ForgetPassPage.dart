@@ -9,8 +9,27 @@ class ForgotPasswordPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("Forgot Password"),
-        backgroundColor: Colors.teal,
+        title: Text(
+          "Forgot Password",
+          style: TextStyle(color: Colors.white, fontSize: 24),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        centerTitle: true,
+        elevation: 4,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.teal, Color.fromARGB(255, 41, 175, 45)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: Center(
         child: Padding(
@@ -43,7 +62,10 @@ class ForgotPasswordPage extends StatelessWidget {
                   ),
                   padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                 ),
-                child: Text("Send Reset Link", style: TextStyle(fontSize: 16)),
+                child: Text(
+                  "Send Reset Link",
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
                 onPressed: () async {
                   try {
                     await FirebaseAuth.instance.sendPasswordResetEmail(

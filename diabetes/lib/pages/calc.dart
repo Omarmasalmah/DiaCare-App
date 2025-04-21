@@ -1029,7 +1029,7 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
       'carbs': 40, // Approximate
       'calories': 200, // Approximate
       'category': 'Hot Drinks',
-      'image': 'assets/images/HotDrinks/sahlab.jpg',
+      'image': 'assets/images/hotdrinks/sahlab.jpg',
     },
 
 // *********************************
@@ -1042,7 +1042,7 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
       'carbs': 40,
       'calories': 250,
       'category': 'Hot Drinks',
-      'image': 'assets/images/HotDrinks/hot_chocolate.jpg',
+      'image': 'assets/images/hotdrinks/hot_chocolate.jpg',
     },
     {
       'name': 'Hot Kinder',
@@ -1050,7 +1050,7 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
       'carbs': 45,
       'calories': 280,
       'category': 'Hot Drinks',
-      'image': 'assets/images/HotDrinks/hot_kinder.jpg',
+      'image': 'assets/images/hotdrinks/hot_kinder.jpg',
     },
     {
       'name': 'French Vanilla',
@@ -1058,7 +1058,7 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
       'carbs': 35,
       'calories': 200,
       'category': 'Hot Drinks',
-      'image': 'assets/images/HotDrinks/french_vanilla.jpg',
+      'image': 'assets/images/hotdrinks/french_vanilla.jpg',
     },
     {
       'name': 'Caramel Latte',
@@ -1066,7 +1066,7 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
       'carbs': 38,
       'calories': 240,
       'category': 'Hot Drinks',
-      'image': 'assets/images/HotDrinks/caramel_latte.jpg',
+      'image': 'assets/images/hotdrinks/caramel_latte.jpg',
     },
     {
       'name': 'Hazelnut Latte',
@@ -1074,7 +1074,7 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
       'carbs': 36,
       'calories': 230,
       'category': 'Hot Drinks',
-      'image': 'assets/images/HotDrinks/hazelnut_latte.jpg',
+      'image': 'assets/images/hotdrinks/hazelnut_latte.jpg',
     },
     {
       'name': 'White Chocolate Mocha',
@@ -1082,7 +1082,7 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
       'carbs': 50,
       'calories': 300,
       'category': 'Hot Drinks',
-      'image': 'assets/images/HotDrinks/white_chocolate_mocha.jpg',
+      'image': 'assets/images/hotdrinks/white_chocolate_mocha.jpg',
     },
     {
       'name': 'Cappuccino',
@@ -1090,7 +1090,7 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
       'carbs': 12,
       'calories': 80,
       'category': 'Hot Drinks',
-      'image': 'assets/images/HotDrinks/cappuccino.jpg',
+      'image': 'assets/images/hotdrinks/cappuccino.jpg',
     },
     {
       'name': 'Espresso Macchiato',
@@ -1098,7 +1098,7 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
       'carbs': 5,
       'calories': 30,
       'category': 'Hot Drinks',
-      'image': 'assets/images/HotDrinks/espresso_macchiato.jpg',
+      'image': 'assets/images/hotdrinks/espresso_macchiato.jpg',
     },
     {
       'name': 'Chai Latte',
@@ -1106,7 +1106,7 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
       'carbs': 40,
       'calories': 220,
       'category': 'Hot Drinks',
-      'image': 'assets/images/HotDrinks/chai_latte.jpg',
+      'image': 'assets/images/hotdrinks/chai_latte.jpg',
     },
     {
       'name': 'Hot Mocha',
@@ -1114,7 +1114,7 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
       'carbs': 17,
       'calories': 90,
       'category': 'Hot Drinks',
-      'image': 'assets/images/HotDrinks/hot_mocha.jpg',
+      'image': 'assets/images/hotdrinks/hot_mocha.jpg',
     },
     {
       'name': 'Hot Cinnamon Latte',
@@ -1122,7 +1122,7 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
       'carbs': 40,
       'calories': 220,
       'category': 'Hot Drinks',
-      'image': 'assets/images/HotDrinks/hot_cinnamon_latte.jpg',
+      'image': 'assets/images/hotdrinks/hot_cinnamon_latte.jpg',
     },
     {
       'name': 'Hot Lotus',
@@ -1130,7 +1130,7 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
       'carbs': 50,
       'calories': 290,
       'category': 'Hot Drinks',
-      'image': 'assets/images/HotDrinks/hot_lotus.jpg',
+      'image': 'assets/images/hotdrinks/hot_lotus.jpg',
     },
 /***
  * 
@@ -3112,7 +3112,7 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
       'carbs': 1.2,
       'calories': 154, // Approximate
       'category': 'Breakfast',
-      'image': 'assets/images/Breakfast/omelette.jpg',
+      'image': 'assets/images/Breakfast/Omelette.jpg',
     },
     {
       'name': 'Pastry with Cheese',
@@ -3480,7 +3480,7 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
       'carbs': 0,
       'calories': 102,
       'category': 'Breakfast',
-      'image': 'assets/images/Breakfast/butter.jpg',
+      'image': 'assets/images/Breakfast/Butter.jpg',
     },
     {
       'name': 'Butter',
@@ -3488,7 +3488,7 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
       'carbs': 0,
       'calories': 102,
       'category': 'Dairy Products',
-      'image': 'assets/images/Breakfast/butter.jpg',
+      'image': 'assets/images/Breakfast/Butter.jpg',
     },
     {
       'name': 'Cream Cheese Spread',
@@ -3693,8 +3693,11 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
                                 child: Image.asset(
                                   food['image'],
                                   width: double.infinity,
-                                  height: double.infinity,
-                                  fit: BoxFit.cover,
+                                  height: 100, // Fixed height for consistency
+                                  fit: BoxFit
+                                      .cover, // Ensures image covers the space
+                                  alignment: Alignment
+                                      .center, // Keeps the focus in the center
                                 ),
                               ),
                             ),
@@ -3821,6 +3824,13 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
                   tooltip: 'What is Carb-to-Insulin Ratio?',
                   onPressed: () {
                     showCarbToInsulinRatioExplanation(context);
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.calculate_outlined),
+                  tooltip: 'Manual food entry',
+                  onPressed: () {
+                    Manual_food_entry(context);
                   },
                 ),
               ],
@@ -4068,6 +4078,183 @@ class _InsulinCalculatorScreenState extends State<InsulinCalculatorScreen> {
                 Navigator.of(context).pop();
               },
               child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void Manual_food_entry(BuildContext context) {
+    // Controller for user input fields
+    final TextEditingController foodNameController = TextEditingController();
+    final TextEditingController sizeController = TextEditingController();
+    final TextEditingController carbPercentageController =
+        TextEditingController();
+    final TextEditingController calorieController = TextEditingController();
+    final TextEditingController quantityController = TextEditingController();
+
+    String carbToInsulinRatio = "10:1"; // Default ratio
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Manual food entry'),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'In this calculator you can record any food that you did not find in the categories and you can calculate the doses and calories.',
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: foodNameController,
+                  decoration: const InputDecoration(labelText: 'Food Name'),
+                ),
+                TextField(
+                  controller: sizeController,
+                  keyboardType: TextInputType.number,
+                  decoration:
+                      const InputDecoration(labelText: 'Size (grams/ml)'),
+                ),
+                TextField(
+                  controller: carbPercentageController,
+                  keyboardType: TextInputType.number,
+                  decoration:
+                      const InputDecoration(labelText: 'Carb Percentage (%)'),
+                ),
+                TextField(
+                  controller: calorieController,
+                  keyboardType: TextInputType.number,
+                  decoration:
+                      const InputDecoration(labelText: 'Calories (per unit)'),
+                ),
+                TextField(
+                  controller: quantityController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: 'Quantity'),
+                ),
+                const SizedBox(height: 20),
+                DropdownButton<String>(
+                  value: carbToInsulinRatio,
+                  items: List.generate(16, (index) {
+                    int ratio = 5 + index;
+                    return DropdownMenuItem(
+                      value: "$ratio:1",
+                      child: Text("$ratio:1"),
+                    );
+                  }),
+                  onChanged: (value) {
+                    if (value != null) {
+                      carbToInsulinRatio = value;
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Close'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Perform calculations
+                final double? size = double.tryParse(sizeController.text);
+                final double? carbPercentage =
+                    double.tryParse(carbPercentageController.text);
+                final double? caloriesPerUnit =
+                    double.tryParse(calorieController.text);
+                final int? quantity = int.tryParse(quantityController.text);
+
+                if (size != null &&
+                    carbPercentage != null &&
+                    caloriesPerUnit != null &&
+                    quantity != null) {
+                  final double totalCarbs = carbPercentage * quantity;
+                  final double totalCalories = caloriesPerUnit * quantity;
+                  final double necessaryDoses = totalCarbs /
+                      double.parse(carbToInsulinRatio.split(':')[0]);
+
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Calculation Results'),
+                        content: Text(
+                          'Total Carbs: ${totalCarbs.toStringAsFixed(2)} g\n'
+                          'Total Calories: ${totalCalories.toStringAsFixed(2)} kcal\n'
+                          'Necessary Doses: ${necessaryDoses.toStringAsFixed(2)} units',
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () async {
+                              final String userId =
+                                  FirebaseAuth.instance.currentUser?.uid ??
+                                      "unknown_user";
+                              final String selectedFoods =
+                                  "${foodNameController.text} (Quantity: ${quantityController.text})";
+                              final Timestamp timestamp = Timestamp.now();
+
+                              await FirebaseFirestore.instance
+                                  .collection('Doses')
+                                  .add({
+                                'caloriesValue': totalCalories,
+                                'insulinValue': necessaryDoses,
+                                'selectedFoods': selectedFoods,
+                                'timestamp': timestamp,
+                                'userId': userId,
+                              });
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text(
+                                        "Data added to history successfully!")),
+                              );
+                              Navigator.of(context).pop();
+                              // Ensure both dialogs are closed by adding a slight delay
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Add to my history'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Close'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } else {
+                  // Handle invalid input
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Error'),
+                        content: const Text(
+                            'Please enter valid values for all fields.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
+              },
+              child: const Text('Calculate'),
             ),
           ],
         );

@@ -186,7 +186,7 @@ class _DiabetesPageState extends State<DiabetesPage> {
                         await FirebaseFirestore.instance
                             .collection('glucose_entries')
                             .add({
-                          "value": "$_selectedValue mg/dL",
+                          "value": "$_selectedValue",
                           "date": formattedDate,
                           "time": formattedTime,
                           "status": _selectedStatus,

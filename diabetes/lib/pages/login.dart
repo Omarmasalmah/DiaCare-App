@@ -5,6 +5,7 @@ import 'package:diabetes/components/square_tile.dart';
 import 'package:diabetes/pages/DoctorHomePage.dart';
 import 'package:diabetes/pages/LocaleProvider.dart';
 import 'package:diabetes/pages/PhoneNumberPage.dart';
+import 'package:diabetes/pages/PredictPage.dart';
 import 'package:diabetes/pages/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -521,7 +522,7 @@ class _LogInState extends State<LogIn> {
                   const Text(
                     ' Welcome to',
                     style: TextStyle(
-                        color: Color.fromARGB(255, 0, 0, 0),
+                        color: Color.fromARGB(255, 213, 212, 212),
                         fontSize: 40,
                         fontWeight: FontWeight.w500),
                   ),
@@ -532,7 +533,7 @@ class _LogInState extends State<LogIn> {
                         fontSize: 45,
                         fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(height: 1.0),
+                  //    const SizedBox(height: 1.0),
                   const SizedBox(height: 1.0),
 
                   // Email
@@ -571,7 +572,7 @@ class _LogInState extends State<LogIn> {
                     const SizedBox(height: 10),
                   ],
 
-                  const SizedBox(height: 10.0),
+                  //   const SizedBox(height: 10.0),
 
                   // Forget password?
                   Padding(
@@ -623,12 +624,34 @@ class _LogInState extends State<LogIn> {
                   ),
 
                   const SizedBox(height: 18.0),
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal, // Button color
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const PredictPage()),
+                      );
+                    },
+                    icon: const Icon(Icons.analytics, color: Colors.white),
+                    label: const Text(
+                      "Check Diabetes Prediction",
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                  ),
                   const SizedBox(height: 18.0),
 
                   // Sign in button
 
-                  const SizedBox(height: 20),
-                  const SizedBox(height: 20),
+                  //    const SizedBox(height: 20),
+                  //   const SizedBox(height: 20),
 
                   // Or continue with
                   const Padding(
@@ -656,7 +679,7 @@ class _LogInState extends State<LogIn> {
                     ),
                   ),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
 
                   // Google + Facebook
                   Row(
@@ -685,7 +708,7 @@ class _LogInState extends State<LogIn> {
                     ],
                   ),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 5),
 
                   // Sign up
                   Row(

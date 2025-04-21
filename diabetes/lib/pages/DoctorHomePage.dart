@@ -41,6 +41,16 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
     super.initState();
     fetchDoctorName();
     fetchPosts();
+    getCurrentUserId();
+  }
+
+  Future<void> getCurrentUserId() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        currentUserId = user.uid; // Store current user ID
+      });
+    }
   }
 
   Future<void> fetchDoctorName() async {
@@ -264,7 +274,7 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
         await _picker.pickImage(source: ImageSource.gallery);
     if (pickedImage != null) {
       setState(() {
-        _image = File(pickedImage.path) as XFile?;
+        _image = pickedImage; // No need for casting
       });
     }
   }
@@ -398,12 +408,18 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
       'videoController': videoController, // Store the controller object
       'likes': 0,
       'isLiked': false,
+      'doctorName': doctorName,
     };
 
     try {
       print("Storing post...");
       await storePost(newPost);
       print("Post stored successfully!");
+
+      // Refresh the page automatically after posting
+      Future.delayed(const Duration(milliseconds: 100), () async {
+        await fetchPosts(); // Fetch updated posts
+      });
 
       setState(() {
         _userPosts.insert(0, newPost);
@@ -697,43 +713,43 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
                                     const Spacer(),
 
                                     // Delete Button for User's Posts
-                                    if (post['userId'] == currentUserId)
-                                      IconButton(
-                                        icon: const Icon(Icons.delete,
-                                            color: Colors.red),
-                                        onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title:
-                                                    const Text('Delete Post'),
-                                                content: const Text(
-                                                    'Are you sure you want to delete this post?'),
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                    child: const Text('Cancel'),
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop(); // Close the dialog
-                                                    },
-                                                  ),
-                                                  TextButton(
-                                                    child: const Text('Yes'),
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop(); // Close the dialog
-                                                      _deletePost(
-                                                          post['postId'],
-                                                          index); // Delete the post
-                                                    },
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        },
-                                      ),
+                                    // if (userId == currentUserId)
+                                    //   IconButton(
+                                    //     icon: const Icon(Icons.delete,
+                                    //         color: Colors.red),
+                                    //     onPressed: () {
+                                    //       showDialog(
+                                    //         context: context,
+                                    //         builder: (BuildContext context) {
+                                    //           return AlertDialog(
+                                    //             title:
+                                    //                 const Text('Delete Post'),
+                                    //             content: const Text(
+                                    //                 'Are you sure you want to delete this post?'),
+                                    //             actions: <Widget>[
+                                    //               TextButton(
+                                    //                 child: const Text('Cancel'),
+                                    //                 onPressed: () {
+                                    //                   Navigator.of(context)
+                                    //                       .pop(); // Close the dialog
+                                    //                 },
+                                    //               ),
+                                    //               TextButton(
+                                    //                 child: const Text('Yes'),
+                                    //                 onPressed: () {
+                                    //                   Navigator.of(context)
+                                    //                       .pop(); // Close the dialog
+                                    //                   _deletePost(
+                                    //                       post['postId'],
+                                    //                       index); // Delete the post
+                                    //                 },
+                                    //               ),
+                                    //             ],
+                                    //           );
+                                    //         },
+                                    //       );
+                                    //     },
+                                    //   ),
                                   ],
                                 ),
                                 const SizedBox(height: 10),

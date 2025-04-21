@@ -11,7 +11,7 @@ class MainCalc extends StatelessWidget {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: const Color.fromARGB(255, 23, 167, 42),
-        title: const Text('Diabetes Management',
+        title: const Text('Food List & Calculator',
             style: TextStyle(color: Colors.white, fontSize: 24)),
         centerTitle: true,
         elevation: 4,
@@ -145,35 +145,35 @@ class MainCalc extends StatelessWidget {
                 // Third Button: Recording & Calculation
                 SizedBox(
                   width: 300, // Button width
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      backgroundColor: const Color.fromARGB(255, 182, 255, 193),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Image.asset(
-                          'assets/images/recordAndCalc.png', // Replace with your image
-                          width: 80,
-                          height: 80,
-                        ),
-                        const SizedBox(width: 10),
-                        const Text(
-                          'Meal Records & History',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  // child: ElevatedButton(
+                  //   onPressed: () {},
+                  //   style: ElevatedButton.styleFrom(
+                  //     padding: const EdgeInsets.symmetric(vertical: 10),
+                  //     shape: RoundedRectangleBorder(
+                  //       borderRadius: BorderRadius.circular(15),
+                  //     ),
+                  //     backgroundColor: const Color.fromARGB(255, 182, 255, 193),
+                  //   ),
+                  //   child: Row(
+                  //     mainAxisAlignment: MainAxisAlignment.start,
+                  //     children: [
+                  //       Image.asset(
+                  //         'assets/images/recordAndCalc.png', // Replace with your image
+                  //         width: 80,
+                  //         height: 80,
+                  //       ),
+                  //       const SizedBox(width: 10),
+                  //       const Text(
+                  //         'Meal Records & History',
+                  //         style: TextStyle(
+                  //           fontSize: 16,
+                  //           fontWeight: FontWeight.bold,
+                  //           color: Colors.black,
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                 ),
               ],
             ),
