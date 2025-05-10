@@ -29,10 +29,10 @@ This is a mobile application designed to assist people with diabetes by providin
 - **Data Visualization**: Matplotlib / Flutter Charts
 
 
-![App Demo](assets/images/image1.png)
-![App Demo](assets/images/image2.png)
-![App Demo](assets/images/image3.png)
-![App Demo](assets/images/image4.png)
+![App Demo](assets/image1.png)
+![App Demo](assets/image2.png)
+![App Demo](assets/image3.png)
+![App Demo](assets/image4.png)
 
 
 ## 🤝 Contributors
